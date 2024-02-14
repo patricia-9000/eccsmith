@@ -1,13 +1,12 @@
-# Blacksmith Rowhammer Fuzzer
+# ECCsmith, a fork of the Blacksmith Rowhammer Fuzzer
 
 [![Academic Code](https://img.shields.io/badge/Origin-Academic%20Code-C1ACA0.svg?style=flat)]() [![Language Badge](https://img.shields.io/badge/Made%20with-C/C++-blue.svg)](https://isocpp.org/std/the-standard) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![contributions welcome](https://img.shields.io/badge/Contributions-welcome-lightgray.svg?style=flat)]()
 
+ECCsmith is a modified version of [Blacksmith](https://github.com/comsec-group/blacksmith) which provides a means of verifying the functionality of ECC DIMMs, by attempting to inject bitflip errors into memory and then using [Rasdaemon](https://github.com/mchehab/rasdaemon) to detect whether or not they are successfully corrected by the ECC mechanism.
 
-[![DOI](https://img.shields.io/badge/DOI-20.500.11850/525008-yellow.svg)](https://www.research-collection.ethz.ch/handle/20.500.11850/525013) [![Preprint](https://img.shields.io/badge/Preprint-ETH%20Research%20Collection-orange.svg)](https://www.research-collection.ethz.ch/handle/20.500.11850/525008) [![Paper](https://img.shields.io/badge/To%20appear%20in-IEEE%20S&P%20'22-brightgreen.svg)](https://www.ieee-security.org/TC/SP2022/program-papers.html) [![Funding](https://img.shields.io/badge/Grant-NCCR%20Automation%20(51NF40180545)-red.svg)](https://nccr-automation.ch/)
+This is a fork of [The University of Lübeck's Institute for IT Security's fork](https://github.com/UzL-ITS/blacksmith/tree/jsonconfig-upstream-staging) of the Blacksmith repository, which contains the accompanying code to the paper _[Blacksmith: Scalable Rowhammering in the Frequency Domain](https://comsec.ethz.ch/wp-content/files/blacksmith_sp22.pdf)_.
 
-This repository provides the code accompanying the paper _[Blacksmith: Scalable Rowhammering in the Frequency Domain](https://comsec.ethz.ch/wp-content/files/blacksmith_sp22.pdf)_ that is to appear in the IEEE conference Security & Privacy (S&P) 2022.
-
-This is the implementation of our Blacksmith Rowhammer fuzzer. This fuzzer crafts novel non-uniform Rowhammer access patterns based on the concepts of frequency, phase, and amplitude. Our evaluation on 40 DIMMs showed that it is able to bypass recent Target Row Refresh (TRR) in-DRAM mitigations effectively and as such can could trigger bit flips on all 40 tested DIMMs.
+This project is currently under construction, so the rest of this README is unchanged.
 
 ## Getting Started
 
@@ -194,7 +193,7 @@ To cite the Blacksmith **paper** in other academic papers, please use the follow
 
 ```
 @inproceedings{20.500.11850/525008,
-  title = {{{BLACKSMITH}}: {{Scalable}} {{Rowhammering}} in the {{Frequency Domain}}},
+  title = {{{BLACKSMITH}}: Rowhammering in the {{Frequency Domain}}},
   shorttitle = {Blacksmith},
   booktitle = {{{IEEE S}}\&{{P}} '22},
   author = {Jattke, Patrick and {van der Veen}, Victor and Frigo, Pietro and Gunter, Stijn and Razavi, Kaveh},
@@ -208,7 +207,7 @@ To cite the Blacksmith **software** in academic papers, please use the following
 
 ```
 @MISC{20.500.11850/525013,
-    title = {{{BLACKSMITH}}: {{Scalable}} {{Rowhammering}} in the {{Frequency Domain}}},
+    title = {{{BLACKSMITH}}: Rowhammering in the {{Frequency Domain}}},
 	copyright = {MIT License},
 	year = {2022-05},
 	author = {Jattke, Patrick and van der Veen, Victor and Frigo, Pietro and Gunter, Stijn and Razavi, Kaveh},
