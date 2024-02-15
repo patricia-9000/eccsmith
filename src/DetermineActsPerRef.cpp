@@ -63,7 +63,7 @@ int main(int argc, char** argv) {
 
   std::ofstream outFile;
   outFile.open(program_args.output);
-  outFile << "access time in cycles" << std::endl;
+  outFile << "timing" << std::endl;
   for(size_t timing: timings) {
     outFile << timing << std::endl;
   }
