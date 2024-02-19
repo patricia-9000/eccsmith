@@ -70,6 +70,7 @@ add_library(
         src/Utilities/Enums.cpp
         src/Utilities/Logger.cpp
         src/Utilities/BlacksmithConfig.cpp
+        src/RasWatcher.cpp
 )
 
 target_include_directories(
@@ -159,6 +160,7 @@ target_link_libraries(
         PRIVATE
         bs
         argagg
+        sqlite3
 )
 
 # === DetermineConflictTiming Tool # === BLACKSMITH ============================
