@@ -20,6 +20,9 @@ CMakeFiles/*
 build/*
 cmake-build-*
 
+# test config file
+config/test-config.json
+
 # OSX-related files
 .DS_Store
 
