@@ -6,9 +6,11 @@ class RasWatcher {
     
     ~RasWatcher();
     
+    int get_total_corrections();
+    
     //Fetches the current number of rows in the table which stores ECC event records,
     //then returns how much that number has increased by since the last call
-    int fetch_total_corrections();
+    int fetch_new_corrections();
   
   private:
     sqlite3 *ras_db;

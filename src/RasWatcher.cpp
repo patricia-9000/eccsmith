@@ -12,15 +12,18 @@ RasWatcher::RasWatcher() {
   if (ret != SQLITE_OK) {
     Logger::log_error(format_string("Can't open Rasdaemon database: %s\n", sqlite3_errmsg(ras_db)));
   }
-  
-  fetch_total_corrections();
+  fetch_new_corrections();
 }
 
 RasWatcher::~RasWatcher() {
   sqlite3_close(ras_db);
 }
 
-int RasWatcher::fetch_total_corrections() {
+int RasWatcher::get_total_corrections() {
+  return total_corrections;
+}
+
+int RasWatcher::fetch_new_corrections() {
   std::string query = "SELECT COUNT(*) FROM mc_event;";
   int new_total_corrections;
   char **err_msg = 0;
