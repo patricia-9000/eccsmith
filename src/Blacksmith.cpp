@@ -16,6 +16,7 @@
 #include <argagg/convert/csv.hpp>
 
 ProgramArguments program_args;
+RasWatcher *ras_watcher;
 
 int main(int argc, char **argv) {
   Logger::initialize("/dev/stdout");
@@ -60,7 +61,7 @@ int main(int argc, char **argv) {
   
   // start the rasdaemon watcher
   Logger::log_debug("Connecting to Rasdaemon database...");
-  RasWatcher ras_watcher;
+  ras_watcher = new RasWatcher();
 
   Logger::log_debug("Jumping to hammering logic");
   if (!program_args.load_json_filename.empty()) {
@@ -72,7 +73,7 @@ int main(int argc, char **argv) {
       replayer.replay_patterns(program_args.load_json_filename, program_args.pattern_ids);
     }
   } else if (program_args.do_fuzzing && program_args.use_synchronization) {
-    FuzzyHammerer::n_sided_frequency_based_hammering(config, dram_analyzer, ras_watcher, memory,
+    FuzzyHammerer::n_sided_frequency_based_hammering(config, dram_analyzer, memory,
                                                      acts_per_trefi, config.acts_per_trefi != 0,
                                                      program_args.runtime_limit,
                                                      program_args.num_address_mappings_per_pattern,
@@ -87,6 +88,7 @@ int main(int argc, char **argv) {
   }
 
   Logger::close();
+  delete ras_watcher;
   return EXIT_SUCCESS;
 }
 

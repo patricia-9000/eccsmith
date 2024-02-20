@@ -4,6 +4,7 @@
 #include <string>
 #include <unordered_set>
 #include <GlobalDefines.hpp>
+#include "RasWatcher.hpp"
 
 // defines the program's arguments and their default values
 struct ProgramArguments {
@@ -30,6 +31,7 @@ struct ProgramArguments {
 };
 
 extern ProgramArguments program_args;
+extern RasWatcher *ras_watcher;
 
 int main(int argc, char **argv);
 

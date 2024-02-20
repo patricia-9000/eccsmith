@@ -9,7 +9,6 @@
 #include "Fuzzer/HammeringPattern.hpp"
 #include "Memory/Memory.hpp"
 #include "ReplayingHammerer.hpp"
-#include "RasWatcher.hpp"
 
 class FuzzyHammerer {
  public:
@@ -31,13 +30,13 @@ class FuzzyHammerer {
   static void do_random_accesses(const std::vector<volatile char *>& random_rows, int duration_us);
 
   static void
-  n_sided_frequency_based_hammering(BlacksmithConfig &config, DramAnalyzer &dramAnalyzer, RasWatcher &ras_watcher, Memory &memory,
+  n_sided_frequency_based_hammering(BlacksmithConfig &config, DramAnalyzer &dramAnalyzer, Memory &memory,
                                     uint64_t acts, bool fixed_acts_per_ref,
                                     unsigned long runtime_limit, size_t probes_per_pattern, bool sweep_best_pattern);
 
   static void test_location_dependence(ReplayingHammerer &rh, HammeringPattern &pattern);
 
-  static void probe_mapping_and_scan(PatternAddressMapper &mapper, RasWatcher &ras_watcher, Memory &memory,
+  static void probe_mapping_and_scan(PatternAddressMapper &mapper, Memory &memory,
                                      FuzzingParameterSet &fuzzing_params, size_t num_dram_locations);
 
   static void log_overall_statistics(size_t cur_round, const std::string &best_mapping_id,
