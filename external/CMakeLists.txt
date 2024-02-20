@@ -38,14 +38,14 @@ target_include_directories(
 
 unset(CMAKE_PROJECT_INCLUDE_BEFORE)
 
-message(STATUS "Fetching external dependency argagg -- done!")
 set(MESSAGE_QUIET OFF)
+message(STATUS "Fetching external dependency argagg -- done!")
 
 # === ASMJIT ===================================================================
 
 if (BLACKSMITH_ENABLE_JITTING)
     message(STATUS "Fetching external dependency asmjit")
-    set(MESSAGE_QUIET OFF)
+    set(MESSAGE_QUIET ON)
 
     FetchContent_Declare(
             asmjit
@@ -81,6 +81,9 @@ message(STATUS "Fetching external dependency nlohmann/json -- done!")
 
 # === Eigen ===================================================================
 
+message(STATUS "Fetching external dependency eigen")
+set(MESSAGE_QUIET ON)
+
 FetchContent_Declare(
         Eigen
         GIT_REPOSITORY https://gitlab.com/libeigen/eigen.git
@@ -95,3 +98,6 @@ set(EIGEN_BUILD_DOC OFF)
 set(BUILD_TESTING OFF)
 set(EIGEN_BUILD_PKGCONFIG OFF)
 FetchContent_MakeAvailable(Eigen)
+
+set(MESSAGE_QUIET OFF)
+message(STATUS "Fetching external dependency eigen -- done!")
