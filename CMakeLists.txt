@@ -155,12 +155,14 @@ target_compile_definitions(
         GIT_COMMIT_HASH="${GIT_COMMIT_HASH}"
 )
 
+find_package(SQLite3 REQUIRED)
+
 target_link_libraries(
         eccsmith
         PRIVATE
         bs
         argagg
-        sqlite3
+        SQLite::SQLite3
 )
 
 # === DetermineConflictTiming Tool # === BLACKSMITH ============================
