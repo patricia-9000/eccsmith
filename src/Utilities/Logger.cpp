@@ -100,6 +100,14 @@ void Logger::log_bitflip(volatile char *flipped_address, uint64_t row_no, unsign
   if (newline) instance.logfile << std::endl;
 }
 
+void Logger::log_corrected_bitflip(int count, unsigned long timestamp) {
+  instance.logfile << FC_GREEN
+                   << "[!] ECC successfully corrected " << count << " bitflip(s) after "
+                   << format_timestamp(timestamp - instance.timestamp_start) << ".";
+  instance.logfile << F_RESET;
+  instance.logfile << std::endl;
+}
+
 void Logger::log_success(const std::string &message, bool newline) {
   instance.logfile << FC_GREEN << "[!] " << message;
   instance.logfile << F_RESET;

@@ -13,6 +13,7 @@ RasWatcher::RasWatcher() {
     Logger::log_error(format_string("Can't open Rasdaemon database: %s\n", sqlite3_errmsg(ras_db)));
   }
   fetch_new_corrections();
+  Logger::log_info(format_string("Opened connection to Rasdaemon database, with %d total ECC corrections on record.", total_corrections));
 }
 
 RasWatcher::~RasWatcher() {
@@ -21,6 +22,14 @@ RasWatcher::~RasWatcher() {
 
 int RasWatcher::get_total_corrections() {
   return total_corrections;
+}
+
+int RasWatcher::report_corrected_bitflips() {
+  int new_corrections = fetch_new_corrections();
+  if (new_corrections > 0) {
+    Logger::log_corrected_bitflip(new_corrections, (size_t) time(nullptr));
+  }
+  return new_corrections;
 }
 
 int RasWatcher::fetch_new_corrections() {

@@ -57,6 +57,10 @@ int main(int argc, char **argv) {
   uint64_t acts_per_trefi = config.acts_per_trefi;
   if (acts_per_trefi == 0)
     acts_per_trefi = dram_analyzer.count_acts_per_trefi();
+  
+  // start the rasdaemon watcher
+  Logger::log_debug("Connecting to Rasdaemon database...");
+  RasWatcher ras_watcher;
 
   Logger::log_debug("Jumping to hammering logic");
   if (!program_args.load_json_filename.empty()) {
@@ -68,7 +72,7 @@ int main(int argc, char **argv) {
       replayer.replay_patterns(program_args.load_json_filename, program_args.pattern_ids);
     }
   } else if (program_args.do_fuzzing && program_args.use_synchronization) {
-    FuzzyHammerer::n_sided_frequency_based_hammering(config, dram_analyzer, memory,
+    FuzzyHammerer::n_sided_frequency_based_hammering(config, dram_analyzer, ras_watcher, memory,
                                                      acts_per_trefi, config.acts_per_trefi != 0,
                                                      program_args.runtime_limit,
                                                      program_args.num_address_mappings_per_pattern,

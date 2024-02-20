@@ -13,7 +13,7 @@ std::unordered_map<std::string, std::unordered_map<std::string, int>> FuzzyHamme
 HammeringPattern FuzzyHammerer::hammering_pattern = HammeringPattern(); /* NOLINT */
 
 void
-FuzzyHammerer::n_sided_frequency_based_hammering(BlacksmithConfig &config, DramAnalyzer &dramAnalyzer, Memory &memory,
+FuzzyHammerer::n_sided_frequency_based_hammering(BlacksmithConfig &config, DramAnalyzer &dramAnalyzer, RasWatcher &ras_watcher, Memory &memory,
                                                  uint64_t acts, bool fixed_acts_per_ref,
                                                  unsigned long runtime_limit, size_t probes_per_pattern,
                                                  bool sweep_best_pattern) {
@@ -73,7 +73,7 @@ FuzzyHammerer::n_sided_frequency_based_hammering(BlacksmithConfig &config, DramA
 //          current_round, hammering_pattern.instance_id.c_str(), cnt_pattern_probes, mapper.get_instance_id().c_str()));
 //
       // we test this combination of (pattern, mapping) at three different DRAM locations
-      probe_mapping_and_scan(mapper, memory, fuzzing_params, program_args.num_dram_locations_per_mapping);
+      probe_mapping_and_scan(mapper, ras_watcher, memory, fuzzing_params, program_args.num_dram_locations_per_mapping);
       sum_flips_one_pattern_all_mappings += mapper.count_bitflips();
 
       if (sum_flips_one_pattern_all_mappings > 0) {
@@ -285,7 +285,7 @@ void FuzzyHammerer::test_location_dependence(ReplayingHammerer &rh, HammeringPat
   pattern.is_location_dependent = is_location_dependent;
 }
 
-void FuzzyHammerer::probe_mapping_and_scan(PatternAddressMapper &mapper, Memory &memory,
+void FuzzyHammerer::probe_mapping_and_scan(PatternAddressMapper &mapper, RasWatcher &ras_watcher, Memory &memory,
                                            FuzzingParameterSet &fuzzing_params, size_t num_dram_locations) {
 
   // ATTENTION: This method uses the global variable hammering_pattern to refer to the pattern that is to be hammered
@@ -336,8 +336,11 @@ void FuzzyHammerer::probe_mapping_and_scan(PatternAddressMapper &mapper, Memory 
     // do hammering
     code_jitter.hammer_pattern(fuzzing_params, true);
 
-    // check if any bit flips happened
+    // check if any uncorrected bit flips happened
     flipped_bits += memory.check_memory(mapper, false, true);
+    
+    // check if any corrected bit flips happened
+    flipped_bits += ras_watcher.report_corrected_bitflips();
 
     // now shift the mapping to another location
     std::mt19937 gen = std::mt19937(std::random_device()());
