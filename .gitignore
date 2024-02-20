@@ -23,6 +23,9 @@ cmake-build-*
 # test config file
 config/test-config.json
 
+# log file
+eccsmith.log
+
 # OSX-related files
 .DS_Store
 
