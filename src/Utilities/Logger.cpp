@@ -89,20 +89,20 @@ void Logger::log_timestamp() {
 
 void Logger::log_bitflip(volatile char *flipped_address, uint64_t row_no, unsigned char actual_value,
                          unsigned char expected_value, unsigned long timestamp, bool newline) {
-  instance.logfile << FC_GREEN
-                   << "[!] Flip " << std::hex << (void *) flipped_address << ", "
+  instance.logfile << FC_RED_BRIGHT << FF_BOLD
+                   << "[!] ECC failed to correct bitflip " << std::hex << (void *) flipped_address << ", "
                    << std::dec << "row " << row_no << ", "
                    << "page offset: " << (uint64_t)flipped_address%(uint64_t)getpagesize() << ", "
                    << "byte offset: " << (uint64_t)flipped_address%(uint64_t)8 << ", "
                    << std::hex << "from " << (int) expected_value << " to " << (int) actual_value << ", "
-                   << std::dec << "detected after " << format_timestamp(timestamp - instance.timestamp_start) << ".";
+                   << std::dec << "at " << format_timestamp(timestamp - instance.timestamp_start) << ".";
   instance.logfile << F_RESET;
   if (newline) instance.logfile << std::endl;
 }
 
 void Logger::log_corrected_bitflip(int count, unsigned long timestamp) {
-  instance.logfile << FC_GREEN
-                   << "[!] ECC successfully corrected " << count << " bitflip(s) after "
+  instance.logfile << FC_GREEN << FF_BOLD
+                   << "[!] ECC successfully corrected " << count << " bitflip(s) at "
                    << format_timestamp(timestamp - instance.timestamp_start) << ".";
   instance.logfile << F_RESET;
   instance.logfile << std::endl;
