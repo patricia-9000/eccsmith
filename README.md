@@ -8,7 +8,7 @@ Eccsmith is a modified and repurposed version of [Blacksmith](https://github.com
 
 Eccsmith has been verified to work on Ubuntu 22.04.4 LTS.
 
-**This project is stil being developed and adapted from Blacksmith. The rest of this readme is a work in progress.**
+**This project is stil being developed and adapted from Blacksmith! The rest of this readme is a work in progress!**
 
 ## Step 1 - Build
 
@@ -34,7 +34,7 @@ rasdaemon
 
 ## Step 3 - Hugepages
 
-You also need to have 1 GB hugepages enabled on your system. This can be done by editing the contents of the file `/etc/default/grub` so that the line:
+You also need to enable 1 GB hugepages on your system. This can be done by editing the contents of the file `/etc/default/grub` so that the line:
 
 ```
 GRUB_CMDLINE_LINUX=""
@@ -56,7 +56,7 @@ Finally, restart your system, and hugepages will be enabled. Now you can run Ecc
 
 ## Running
 
-Run the `eccsmith` executable located in the `build` directory. After finishing a run, you can find a `fuzz-summary.json` that contains the information found in the `stdout.log` in a machine-processable format. In case you passed the `--sweeping` flag, you can additionally find a `sweep-summary-*.json` file that contains the information of the sweeping pass.
+Run the `eccsmith` executable located in the `build` directory. After finishing a run, you can find a `fuzz-summary.json` that contains the information from the log file in a machine-processable format. In case you passed the `--sweeping` flag, you can additionally find a `sweep-summary-*.json` file that contains the information of the sweeping pass.
 
 ### Supported Parameters
 
