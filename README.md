@@ -6,17 +6,35 @@ Eccsmith can verify if ECC is working properly on your system, by attempting to 
 
 Eccsmith is a modified and repurposed version of [Blacksmith](https://github.com/comsec-group/blacksmith), the program accompanying the paper _[Blacksmith: Scalable Rowhammering in the Frequency Domain](https://comsec.ethz.ch/wp-content/files/blacksmith_sp22.pdf)_ (Jattke, van der Veen, Frigo, Gunter, and Razavi). Eccsmith itself is forked from [another fork of Blacksmith](https://github.com/UzL-ITS/blacksmith/tree/jsonconfig-upstream-staging) made by The University of Lübeck's Institute for IT Security, which makes the program easier to use across different hardware.
 
+Eccsmith has been verified to work on Ubuntu 22.04.4 LTS.
+
 **This project is stil being developed and adapted from Blacksmith. The rest of this readme is a work in progress.**
 
-## Setup and Installation
+## Step 1 - Build
 
-Eccsmith has been verified to work on Ubuntu 22.04.4 LTS. First, you must have installed the packages g++ (version 8 or above) and cmake (version 3.14 or above). Then simply run the installation script, which will build Eccsmith with all its dependencies:
+First, you must have installed the packages g++ (version 8 or above) and cmake (version 3.14 or above). Then simply run the build script, which will build Eccsmith with all of its dependencies:
 
 ```bash
-sudo bash install.sh
+bash build.sh
 ```
 
-Before you can run Eccsmith, you also need to have 1 GB hugepages enabled on your system. This can be done by editing the contents of the file `/etc/default/grub` so that the line:
+## Step 2 - Rasdaemon
+
+Next, install Rasdaemon:
+
+```bash
+sudo apt install rasdaemon
+```
+
+And make it start monitoring:
+
+```bash
+rasdaemon
+```
+
+## Step 3 - Hugepages
+
+You also need to have 1 GB hugepages enabled on your system. This can be done by editing the contents of the file `/etc/default/grub` so that the line:
 
 ```
 GRUB_CMDLINE_LINUX=""
