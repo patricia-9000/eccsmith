@@ -10,8 +10,9 @@ Logger::Logger() = default;
 
 void Logger::initialize(const std::string &logfile_filename) {
   instance.logfile = std::ofstream();
-  std::cout << "Writing into logfile " FF_BOLD << logfile_filename << F_RESET << std::endl;
-  // we need to open the log file in append mode because the run_benchmark script writes values into it
+  std::cout << "Eccsmith has started running" << std::endl
+            << "Details are being written to " FF_BOLD << logfile_filename << F_RESET << std::endl
+            << "Any detected bitflips will also be written to the console" << std::endl;
   instance.logfile.open(logfile_filename, std::ios::out | std::ios::trunc);
   instance.timestamp_start = (unsigned long) time(nullptr);
 }
@@ -89,23 +90,30 @@ void Logger::log_timestamp() {
 
 void Logger::log_bitflip(volatile char *flipped_address, uint64_t row_no, unsigned char actual_value,
                          unsigned char expected_value, unsigned long timestamp, bool newline) {
-  instance.logfile << FC_RED_BRIGHT << FF_BOLD
-                   << "[!] ECC failed to correct bitflip " << std::hex << (void *) flipped_address << ", "
-                   << std::dec << "row " << row_no << ", "
-                   << "page offset: " << (uint64_t)flipped_address%(uint64_t)getpagesize() << ", "
-                   << "byte offset: " << (uint64_t)flipped_address%(uint64_t)8 << ", "
-                   << std::hex << "from " << (int) expected_value << " to " << (int) actual_value << ", "
-                   << std::dec << "at " << format_timestamp(timestamp - instance.timestamp_start) << ".";
-  instance.logfile << F_RESET;
-  if (newline) instance.logfile << std::endl;
+  std::stringstream ss;
+  ss << FC_RED_BRIGHT << FF_BOLD
+     << "[!] ECC failed to correct bitflip " << std::hex << (void *) flipped_address << ", "
+     << std::dec << "row " << row_no << ", "
+     << "page offset: " << (uint64_t)flipped_address%(uint64_t)getpagesize() << ", "
+     << "byte offset: " << (uint64_t)flipped_address%(uint64_t)8 << ", "
+     << std::hex << "from " << (int) expected_value << " to " << (int) actual_value << ", "
+     << std::dec << "at " << format_timestamp(timestamp - instance.timestamp_start) << "."
+     << F_RESET;
+  if (newline) ss << std::endl;
+  
+  instance.logfile << ss.str();
+  std::cout << ss.str();
 }
 
 void Logger::log_corrected_bitflip(int count, unsigned long timestamp) {
-  instance.logfile << FC_GREEN << FF_BOLD
-                   << "[!] ECC successfully corrected " << count << " bitflip(s) at "
-                   << format_timestamp(timestamp - instance.timestamp_start) << ".";
-  instance.logfile << F_RESET;
-  instance.logfile << std::endl;
+  std::stringstream ss;
+  ss << FC_GREEN << FF_BOLD
+     << "[!] ECC successfully corrected " << count << " bitflip(s) at "
+     << format_timestamp(timestamp - instance.timestamp_start) << "."
+     << F_RESET << std::endl;
+  
+  instance.logfile << ss.str();
+  std::cout << ss.str();
 }
 
 void Logger::log_success(const std::string &message, bool newline) {
