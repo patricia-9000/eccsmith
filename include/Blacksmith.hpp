@@ -4,7 +4,7 @@
 #include <string>
 #include <unordered_set>
 #include <GlobalDefines.hpp>
-#include "RasWatcher.hpp"
+#include "Utilities/RasWatcher.hpp"
 
 // defines the program's arguments and their default values
 struct ProgramArguments {

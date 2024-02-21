@@ -8,7 +8,7 @@
 
 #include "Fuzzer/HammeringPattern.hpp"
 #include "Memory/Memory.hpp"
-#include "ReplayingHammerer.hpp"
+#include "Forges/ReplayingHammerer.hpp"
 
 class FuzzyHammerer {
  public:

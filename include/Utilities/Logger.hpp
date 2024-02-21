@@ -9,7 +9,7 @@
 #include <string>
 #include <fstream>
 #include <memory>
-#include "BlacksmithConfig.hpp"
+#include "Utilities/BlacksmithConfig.hpp"
 
 template<typename ... Args>
 std::string format_string(const std::string &format, Args ... args) {

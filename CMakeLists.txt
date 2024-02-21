@@ -70,7 +70,7 @@ add_library(
         src/Utilities/Enums.cpp
         src/Utilities/Logger.cpp
         src/Utilities/BlacksmithConfig.cpp
-        src/RasWatcher.cpp
+        src/Utilities/RasWatcher.cpp
 )
 
 target_include_directories(
@@ -169,7 +169,7 @@ target_link_libraries(
 
 add_executable(
         determineConflictThresh
-        src/DetermineConflictThresh.cpp
+        src/Utilities/DetermineConflictThresh.cpp
 )
 
 target_link_libraries(
@@ -181,7 +181,7 @@ target_link_libraries(
 
 add_executable(
         determineActsPerRef
-        src/DetermineActsPerRef.cpp
+        src/Utilities/DetermineActsPerRef.cpp
 )
 
 target_link_libraries(
@@ -193,7 +193,7 @@ target_link_libraries(
 
 add_executable(
         checkAddrFunction
-        src/CheckAddrFunction.cpp
+        src/Utilities/CheckAddrFunction.cpp
 )
 
 target_link_libraries(
