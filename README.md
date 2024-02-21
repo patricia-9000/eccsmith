@@ -81,7 +81,7 @@ Except for the `--config` parameter all other parameters are optional.
     -y, --replay-patterns <csv-list>
         replays patterns given as comma-separated list of pattern IDs
     -l, --logfile
-        log to specified file
+        log to specified file (default: run.log)
 
 ==== Replaying-Specific Configuration =============================
 
@@ -93,9 +93,9 @@ Except for the `--config` parameter all other parameters are optional.
     -s, --sync
         synchronize with REFRESH while hammering (default: 1)
     -w, --sweeping
-        sweep the best pattern over a contig. memory area after fuzzing (default: 0)
+        sweep the best pattern over a contig. memory area after fuzzing (default: true)
     -t, --runtime-limit
-        number of seconds to run the fuzzer before sweeping/terminating (default: 120)
+        number of seconds to run the fuzzer before sweeping/terminating (default: 3 hours)
     -a, --acts-per-ref
         number of activations in a tREF interval, i.e., 7.8us (default: None)
     -p, --probes

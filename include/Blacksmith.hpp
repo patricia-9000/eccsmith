@@ -8,10 +8,10 @@
 
 // defines the program's arguments and their default values
 struct ProgramArguments {
-  // the duration of the fuzzing run in second
-  unsigned long runtime_limit = 120;
+  // the duration of the fuzzing run in seconds
+  unsigned long runtime_limit = 10800;
   // path to logfile
-  std::string logfile = "/dev/stdout";
+  std::string logfile = "run.log";
   // path to JSON config
   std::string config;
   // path to JSON file to load
@@ -23,7 +23,7 @@ struct ProgramArguments {
   // number of DRAM locations we use to check a (pattern, address mapping)'s effectiveness
   size_t num_dram_locations_per_mapping = 3;
   // whether to sweep the 'best pattern' that was found during fuzzing afterward over a contiguous chunk of memory
-  bool sweeping = false;
+  bool sweeping = true;
   // these two parameters define the default program mode: do fuzzing and synchronize with REFRESH
   bool do_fuzzing = true;
   bool use_synchronization = true;
