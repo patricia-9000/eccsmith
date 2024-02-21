@@ -120,7 +120,7 @@ void Logger::log_failure(const std::string &message, bool newline) {
   if (newline) instance.logfile << std::endl;
 }
 
-void Logger::log_metadata(const char *commit_hash, BlacksmithConfig &config, unsigned long run_time_limit_seconds) {
+void Logger::log_metadata(const char *commit_hash, BlacksmithConfig &config, unsigned long run_time_limit) {
   Logger::log_info("General information about this fuzzing run:");
 
   char name[1024] = "";
@@ -130,7 +130,7 @@ void Logger::log_metadata(const char *commit_hash, BlacksmithConfig &config, uns
   ss << "Start timestamp:: " << instance.timestamp_start << std::endl
      << "Hostname: " << name << std::endl
      << "Commit SHA: " << commit_hash << std::endl
-     << "Run time limit: " << run_time_limit_seconds << " (" << format_timestamp(run_time_limit_seconds) << ")";
+     << "Run time limit: " << run_time_limit << " hours";
   Logger::log_data(ss.str());
 
   log_config(config);
