@@ -12,7 +12,7 @@ void Logger::initialize(const std::string &logfile_filename) {
   instance.logfile = std::ofstream();
   std::cout << "Writing into logfile " FF_BOLD << logfile_filename << F_RESET << std::endl;
   // we need to open the log file in append mode because the run_benchmark script writes values into it
-  instance.logfile.open(logfile_filename, std::ios::out | std::ios::app);
+  instance.logfile.open(logfile_filename, std::ios::out | std::ios::trunc);
   instance.timestamp_start = (unsigned long) time(nullptr);
 }
 
