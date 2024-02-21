@@ -119,14 +119,14 @@ void handle_args(int argc, char **argv) {
       {"fuzzing", {"-f", "--fuzzing"}, "perform a fuzzing run (default program mode)", 0},
       {"generate-patterns", {"-g", "--generate-patterns"}, "generates N patterns, but does not perform hammering; used by ARM port", 1},
       {"replay-patterns", {"-y", "--replay-patterns"}, "replays patterns given as comma-separated list of pattern IDs", 1},
-      {"logfile", {"-l", "--logfile"}, "log to specified file", 1},
+      {"logfile", {"-l", "--logfile"}, "log to specified file (default: run.log)", 1},
       {"load-json", {"-j", "--load-json"}, "loads the specified JSON file generated in a previous fuzzer run, loads patterns given by --replay-patterns or determines the best ones", 1},
 
       // note that these two parameters don't require a value, their presence already equals a "true"
       {"sync", {"-s", "--sync"}, "synchronize with REFRESH while hammering (default: present)", 0},
-      {"sweeping", {"-w", "--sweeping"}, "sweep the best pattern over a contig. memory area after fuzzing (default: absent)", 0},
+      {"sweeping", {"-w", "--sweeping"}, "sweep the best pattern over a contig. memory area after fuzzing (default: present)", 0},
 
-      {"runtime-limit", {"-t", "--runtime-limit"}, "number of seconds to run the fuzzer before sweeping/terminating (default: 120)", 1},
+      {"runtime-limit", {"-t", "--runtime-limit"}, "number of seconds to run the fuzzer before sweeping/terminating (default: 10800)", 1},
       {"acts-per-ref", {"-a", "--acts-per-ref"}, "number of activations in a tREF interval, i.e., 7.8us (default: None)", 1},
       {"probes", {"-p", "--probes"}, "number of different DRAM locations to try each pattern on (default: NUM_BANKS/4)", 1},
     }};
