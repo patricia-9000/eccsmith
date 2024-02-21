@@ -13,7 +13,7 @@ Eccsmith is a modified and repurposed version of [Blacksmith](https://github.com
 Eccsmith has been verified to work on Ubuntu 22.04.4 LTS. First, you must have installed the packages g++ (version 8 or above) and cmake (version 3.14 or above). Then simply run the installation script, which will build Eccsmith with all its dependencies:
 
 ```bash
-bash install.sh
+sudo bash install.sh
 ```
 
 Before you can run Eccsmith, you also need to have 1 GB hugepages enabled on your system. This can be done by editing the contents of the file `/etc/default/grub` so that the line:
@@ -40,7 +40,7 @@ Finally, restart your system, and hugepages will be enabled. Now you can run Ecc
 
 Run the `eccsmith` executable located in the `build` directory. After finishing a run, you can find a `fuzz-summary.json` that contains the information found in the `stdout.log` in a machine-processable format. In case you passed the `--sweeping` flag, you can additionally find a `sweep-summary-*.json` file that contains the information of the sweeping pass.
 
-## Supported Parameters
+### Supported Parameters
 
 Eccsmith supports the command-line arguments listed in the following.
 Except for the `--config` parameter all other parameters are optional.

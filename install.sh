@@ -5,12 +5,8 @@ mkdir build
 cd build
 cmake ..
 make -j$(nproc)
+cd ..
 
 # install and start rasdaemon
-git clone https://github.com/mchehab/rasdaemon.git
-cd rasdaemon
-./configure
-make
-make install
+apt install rasdaemon
 rasdaemon
-cd ..
