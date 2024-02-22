@@ -25,6 +25,7 @@ int RasWatcher::get_total_corrections() {
 }
 
 int RasWatcher::report_corrected_bitflips() {
+  Logger::log_info("Checking Rasdaemon database for ECC corrections.");
   int new_corrections = fetch_new_corrections();
   if (new_corrections > 0) {
     Logger::log_corrected_bitflip(new_corrections, (size_t) time(nullptr));
