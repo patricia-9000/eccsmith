@@ -167,41 +167,41 @@ target_link_libraries(
 
 # === DetermineConflictTiming Tool # === BLACKSMITH ============================
 
-add_executable(
-        determineConflictThresh
-        src/Utilities/DetermineConflictThresh.cpp
-)
+#add_executable(
+#        determineConflictThresh
+#        src/Utilities/DetermineConflictThresh.cpp
+#)
 
-target_link_libraries(
-        determineConflictThresh
-        PRIVATE
-        bs
-        argagg
-)
+#target_link_libraries(
+#        determineConflictThresh
+#        PRIVATE
+#        bs
+#        argagg
+#)
 
-add_executable(
-        determineActsPerRef
-        src/Utilities/DetermineActsPerRef.cpp
-)
+#add_executable(
+#        determineActsPerRef
+#        src/Utilities/DetermineActsPerRef.cpp
+#)
 
-target_link_libraries(
-        determineActsPerRef
-        PRIVATE
-        bs
-        argagg
-)
+#target_link_libraries(
+#        determineActsPerRef
+#        PRIVATE
+#        bs
+#        argagg
+#)
 
-add_executable(
-        checkAddrFunction
-        src/Utilities/CheckAddrFunction.cpp
-)
+#add_executable(
+#        checkAddrFunction
+#        src/Utilities/CheckAddrFunction.cpp
+#)
 
-target_link_libraries(
-        checkAddrFunction
-        PRIVATE
-        bs
-        argagg
-)
+#target_link_libraries(
+#        checkAddrFunction
+#        PRIVATE
+#        bs
+#        argagg
+#)
 # === CLEANUP ==================================================================
 
 unset(BLACKSMITH_ENABLE_JSON_EXPORT CACHE)
