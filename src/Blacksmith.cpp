@@ -50,10 +50,8 @@ int main(int argc, char **argv) {
   // initialize the DRAMAddr class to load the proper memory configuration
   DRAMAddr::initialize(memory.get_starting_address());
 
-  // count the number of possible activations per refresh interval, if not given as program argument
-  uint64_t acts_per_trefi = config.acts_per_trefi;
-  if (acts_per_trefi == 0)
-    acts_per_trefi = dram_analyzer.count_acts_per_trefi();
+  // count the number of possible activations per refresh interval
+  uint64_t acts_per_trefi = 90;//dram_analyzer.count_acts_per_trefi();
   
   // start the rasdaemon watcher
   Logger::log_debug("Connecting to Rasdaemon database...");
@@ -70,7 +68,7 @@ int main(int argc, char **argv) {
     }
   } else {
     FuzzyHammerer::n_sided_frequency_based_hammering(config, dram_analyzer, memory,
-                                                     acts_per_trefi, config.acts_per_trefi != 0,
+                                                     acts_per_trefi,
                                                      program_args.runtime_limit,
                                                      program_args.num_address_mappings_per_pattern,
                                                      program_args.sweeping);
@@ -114,7 +112,6 @@ void handle_args(int argc, char **argv) {
 
       {"logfile", {"-l", "--logfile"}, "log to specified file (default: run.log)", 1},
       {"runtime-limit", {"-t", "--runtime-limit"}, "number of seconds to run the fuzzer before sweeping/terminating (default: 10800)", 1},
-      {"acts-per-ref", {"-a", "--acts-per-ref"}, "number of activations in a tREF interval, i.e., 7.8us (default: None)", 1},
       {"probes", {"-p", "--probes"}, "number of different DRAM locations to try each pattern on (default: NUM_BANKS/4)", 1},
     }};
 

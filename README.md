@@ -92,8 +92,6 @@ Except for the `--config` parameter all other parameters are optional.
         log to specified file (default: run.log)
     -t, --runtime-limit
         number of seconds to run the fuzzer before sweeping/terminating (default: 3 hours)
-    -a, --acts-per-ref
-        number of activations in a tREF interval, i.e., 7.8us (default: None)
     -p, --probes
         number of different DRAM locations to try each pattern on (default: NUM_BANKS/4)
 

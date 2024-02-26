@@ -53,7 +53,7 @@ int main(int argc, char **argv) {
   Logger::log_info(format_string("Measuring %lu samples for same row", program_args.samples_hit));
 
   for (size_t sampleIdx = 0; sampleIdx < program_args.samples_hit; sampleIdx++) {
-    auto timing = DramAnalyzer::measure_time((volatile char *) a1.to_virt(), a1_row_hit, config.drama_rounds);
+    auto timing = DramAnalyzer::measure_time((volatile char *) a1.to_virt(), a1_row_hit, 1000);
     timings.emplace_back(
         std::make_tuple(reinterpret_cast<std::uintptr_t>(a1.to_virt()), reinterpret_cast<std::uintptr_t>(a1_row_hit),
                         timing));
@@ -65,7 +65,7 @@ int main(int argc, char **argv) {
   auto *a1_row_conflict = (volatile char *) a1.add(0, 1, 0).to_virt();
   Logger::log_info(format_string("Measuring %lu samples for differing rows", program_args.samples_miss));
   for (size_t sampleIdx = 0; sampleIdx < program_args.samples_miss; sampleIdx++) {
-    auto timing = DramAnalyzer::measure_time((volatile char *) a1.to_virt(), a1_row_conflict, config.drama_rounds);
+    auto timing = DramAnalyzer::measure_time((volatile char *) a1.to_virt(), a1_row_conflict, 1000);
     timings.emplace_back(std::make_tuple(reinterpret_cast<std::uintptr_t>(a1.to_virt()),
                                          reinterpret_cast<std::uintptr_t>(a1_row_conflict), timing));
   }
