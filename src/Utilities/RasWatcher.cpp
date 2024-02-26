@@ -39,8 +39,12 @@ int RasWatcher::fetch_new_corrections() {
   char **err_msg = 0;
   int ret = sqlite3_exec(ras_db, query.c_str(), callback, &new_total_corrections, err_msg);
   if (ret != SQLITE_OK) {
-    Logger::log_error(format_string("SQL error: %s\n", *err_msg));
-    sqlite3_free(err_msg);
+    if (err_msg) {
+      Logger::log_error(format_string("SQL error: %s\n", *err_msg));
+      sqlite3_free(err_msg);
+    } else {
+      Logger::log_error("SQL error: (No error message was returned)\n");
+    }
   }
   
   int increase_in_corrections = new_total_corrections - total_corrections;
