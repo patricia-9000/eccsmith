@@ -74,14 +74,10 @@ Except for the `--config` parameter all other parameters are optional.
     
 ==== Execution Modes ==============================================
 
-    -f, --fuzzing
-        perform a fuzzing run (default program mode)        
     -g, --generate-patterns
         generates N patterns, but does not perform hammering; used by ARM port
     -y, --replay-patterns <csv-list>
         replays patterns given as comma-separated list of pattern IDs
-    -l, --logfile
-        log to specified file (default: run.log)
 
 ==== Replaying-Specific Configuration =============================
 
@@ -90,10 +86,10 @@ Except for the `--config` parameter all other parameters are optional.
         
 ==== Fuzzing-Specific Configuration =============================
 
-    -s, --sync
-        synchronize with REFRESH while hammering (default: 1)
     -w, --sweeping
         sweep the best pattern over a contig. memory area after fuzzing (default: true)
+    -l, --logfile
+        log to specified file (default: run.log)
     -t, --runtime-limit
         number of seconds to run the fuzzer before sweeping/terminating (default: 3 hours)
     -a, --acts-per-ref

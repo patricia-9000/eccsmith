@@ -55,7 +55,6 @@ add_library(
         include/Utilities/TimeHelper.hpp
         src/Forges/FuzzyHammerer.cpp
         src/Forges/ReplayingHammerer.cpp
-        src/Forges/TraditionalHammerer.cpp
         src/Fuzzer/Aggressor.cpp
         src/Fuzzer/AggressorAccessPattern.cpp
         src/Fuzzer/BitFlip.cpp
