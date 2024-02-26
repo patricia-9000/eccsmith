@@ -20,6 +20,9 @@ CMakeFiles/*
 build/*
 cmake-build-*
 
+# fuzz summary file
+fuzz-summary.json
+
 # test config file
 config/test-config.json
 
