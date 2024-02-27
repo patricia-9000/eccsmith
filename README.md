@@ -62,8 +62,8 @@ Eccsmith needs to know how your computer translates from logical memory addresse
 - The memory hardware in your computer, i.e.:
 	- Number of active DRAM channels
 	- Number of active DIMMs
-	- Number of ranks on each DIMM
-	- Total number of banks, i.e. number of banks * number of ranks
+	- Number of ranks on each DIMM (sides with banks on them, so either 1 or 2)
+	- Total number of banks on each DIMM (across both ranks if applicable)
 
 Once you know what these are for your computer, you need to pick the corresponding config file from the [config directory](config/). For example, the file named `coffee-lake-1-1-2-32.json` is for computers using the Intel Coffee Lake memory controller with 1 channel, 1 DIMM, 2 ranks, and 32 banks. Once you know which config file to use, you can move on to running Eccsmith.
 
@@ -73,7 +73,7 @@ The configs are JSON files with the following format:
 
 | Key           | Type                 | Example                                           |
 |---------------|----------------------|---------------------------------------------------|
-| `name`        | string               | `coffee-lake-1-1-2-32`                            |
+| `name`        | string               | "coffee-lake-1-1-2-32"                            |
 | `channels`    | uint                 | 1                                                 |
 | `dimms`       | uint                 | 1                                                 |
 | `ranks`       | uint                 | 2                                                 |
@@ -86,7 +86,7 @@ The configs are JSON files with the following format:
 
 The pairs in `bank_bits` mean those two bits are XORed in the memory mapping function. The same bit can appear in more than one of the three arrays, but all three must contain a total of 30 items between them, where a pair of bits within an array counts as one item. The number of items in `bank_bits` must be at least enough to distinguish between all the banks in your computer's DRAM, i.e. if there are 32 banks then there must be 5 items in `bank_bits`, because 32 can be represented by 5 bits. In seemingly all cases, `col_bits` is the bits from 12 to 0 descending, and `row_bits` is the bits from 29 descending until there are enough for all three arrays to sum to 30 items.
 
-If the config directory doesn't contain a config file which is compatible with your computer, then you will have to create your own and reverse-engineer your computer's memory mapping function yourself, using [DRAMA](https://github.com/IAIK/drama).
+If the config directory doesn't contain a config file which is compatible with your computer, then you will have to create your own, and reverse-engineer your computer's memory mapping function yourself using [DRAMA](https://github.com/IAIK/drama).
 
 ## Running
 
