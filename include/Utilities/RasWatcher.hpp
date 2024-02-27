@@ -6,8 +6,6 @@ class RasWatcher {
     
     ~RasWatcher();
     
-    int get_total_corrections();
-    
     int report_corrected_bitflips();
   
   private:
@@ -22,4 +20,6 @@ class RasWatcher {
     //Extracts the actual result from the data param, converts it from a string to an int, then puts it in the int pointed to by the value param
     //The 4th arg of sqlite3_exec becomes the value param, so that's how we extract the number into new_total_corrections
     static int callback(void *value, int, char **data, char **);
+    
+    void handle_sql_error(int result_code);
 };
