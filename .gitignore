@@ -20,6 +20,9 @@ CMakeFiles/*
 build/*
 cmake-build-*
 
+# log file
+run.log
+
 # fuzz summary file
 fuzz-summary.json
 
