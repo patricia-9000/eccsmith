@@ -52,6 +52,8 @@ class Logger {
                           unsigned char expected_value, unsigned long timestamp, bool newline);
   
   static void log_corrected_bitflip(int count, unsigned long timestamp);
+
+  static void log_sql_error(int result_code);
   
   static void log_debug(const std::string &message, bool newline = true);
 

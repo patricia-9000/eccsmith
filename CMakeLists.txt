@@ -177,6 +177,7 @@ target_link_libraries(
         PRIVATE
         bs
         argagg
+        SQLite::SQLite3
 )
 
 add_executable(
@@ -189,6 +190,7 @@ target_link_libraries(
         PRIVATE
         bs
         argagg
+        SQLite::SQLite3
 )
 
 add_executable(
@@ -201,6 +203,7 @@ target_link_libraries(
         PRIVATE
         bs
         argagg
+        SQLite::SQLite3
 )
 # === CLEANUP ==================================================================
 

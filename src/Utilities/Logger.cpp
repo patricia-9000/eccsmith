@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <GlobalDefines.hpp>
+#include <sqlite3.h>
 
 // initialize the singleton instance
 Logger Logger::instance; /* NOLINT */
@@ -114,6 +115,10 @@ void Logger::log_corrected_bitflip(int count, unsigned long timestamp) {
   
   instance.logfile << ss.str();
   std::cout << ss.str();
+}
+
+void Logger::log_sql_error(int result_code) {
+  log_error(format_string("SQLite3 error: %s", sqlite3_errstr(result_code)));
 }
 
 void Logger::log_success(const std::string &message, bool newline) {
