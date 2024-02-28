@@ -69,9 +69,7 @@ FuzzyHammerer::n_sided_frequency_based_hammering(BlacksmithConfig &config, DramA
     size_t sum_flips_one_pattern_all_mappings = 0;
     for (cnt_pattern_probes = 0; cnt_pattern_probes < probes_per_pattern; ++cnt_pattern_probes) {
       PatternAddressMapper mapper(config.total_banks);
-//      Logger::log_info(format_string("Running pattern #%lu (%s) for address set %d (%s).",
-//          current_round, hammering_pattern.instance_id.c_str(), cnt_pattern_probes, mapper.get_instance_id().c_str()));
-//
+
       // we test this combination of (pattern, mapping) at three different DRAM locations
       probe_mapping_and_scan(mapper, memory, fuzzing_params, program_args.num_dram_locations_per_mapping);
       sum_flips_one_pattern_all_mappings += mapper.count_bitflips();
@@ -340,7 +338,7 @@ void FuzzyHammerer::probe_mapping_and_scan(PatternAddressMapper &mapper, Memory 
     flipped_bits += memory.check_memory(mapper, false, true);
     
     // check if any corrected bit flips happened
-    flipped_bits += ras_watcher->report_corrected_bitflips();
+    flipped_bits += ras_watcher->report_corrected_bitflips(mapper);
 
     // now shift the mapping to another location
     std::mt19937 gen = std::mt19937(std::random_device()());

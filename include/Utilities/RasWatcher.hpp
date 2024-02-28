@@ -1,3 +1,5 @@
+#include "Fuzzer/PatternAddressMapper.hpp"
+
 #include <sqlite3.h>
 
 class RasWatcher {
@@ -6,7 +8,7 @@ class RasWatcher {
     
     ~RasWatcher();
     
-    int report_corrected_bitflips();
+    int report_corrected_bitflips(PatternAddressMapper &mapping);
   
   private:
     sqlite3 *ras_db;

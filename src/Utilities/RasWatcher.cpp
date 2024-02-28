@@ -20,9 +20,10 @@ RasWatcher::~RasWatcher() {
   sqlite3_close(ras_db);
 }
 
-int RasWatcher::report_corrected_bitflips() {
+int RasWatcher::report_corrected_bitflips(PatternAddressMapper &mapping) {
   Logger::log_info("Checking Rasdaemon database for ECC corrections.");
   int new_corrections = fetch_new_corrections();
+  mapping.corrected_bit_flips += new_corrections;
   if (new_corrections > 0)
     Logger::log_corrected_bitflip(new_corrections, (size_t) time(nullptr));
   return new_corrections;

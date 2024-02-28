@@ -65,6 +65,9 @@ class PatternAddressMapper {
 
   // the bit flips that were detected while running the pattern with this mapping
   std::vector<std::vector<BitFlip>> bit_flips;
+  
+  // the number of bit flips that were corrected by ECC while running the pattern with this mapping
+  int corrected_bit_flips = 0;
 
   // the reproducibility score of this mapping, e.g.,
   //    1   => 100%: was reproducible in all reproducibility runs executed,

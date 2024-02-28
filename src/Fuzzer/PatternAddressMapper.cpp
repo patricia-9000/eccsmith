@@ -274,6 +274,7 @@ void to_json(nlohmann::json &j, const PatternAddressMapper &p) {
   j = nlohmann::json{{"id", p.get_instance_id()},
                      {"aggressor_to_addr", p.aggressor_to_addr},
                      {"bit_flips", p.bit_flips},
+                     {"corrected_bit_flips", p.corrected_bit_flips},
                      {"min_row", p.min_row},
                      {"max_row", p.max_row},
                      {"bank_no", p.bank_no},
@@ -287,6 +288,7 @@ void from_json(const nlohmann::json &j, PatternAddressMapper &p) {
   j.at("id").get_to(p.get_instance_id());
   j.at("aggressor_to_addr").get_to(p.aggressor_to_addr);
   j.at("bit_flips").get_to(p.bit_flips);
+  j.at("corrected_bit_flips").get_to(p.corrected_bit_flips);
   j.at("min_row").get_to(p.min_row);
   j.at("max_row").get_to(p.max_row);
   j.at("bank_no").get_to(p.bank_no);
@@ -358,6 +360,7 @@ PatternAddressMapper::PatternAddressMapper(const PatternAddressMapper &other)
       bank_no(other.bank_no),
       aggressor_to_addr(other.aggressor_to_addr),
       bit_flips(other.bit_flips),
+      corrected_bit_flips(other.corrected_bit_flips),
       reproducibility_score(other.reproducibility_score),
       total_banks(other.total_banks) {
   code_jitter = std::make_unique<CodeJitter>();
@@ -389,6 +392,7 @@ PatternAddressMapper &PatternAddressMapper::operator=(const PatternAddressMapper
 
   aggressor_to_addr = other.aggressor_to_addr;
   bit_flips = other.bit_flips;
+  corrected_bit_flips = other.corrected_bit_flips;
   reproducibility_score = other.reproducibility_score;
 
   return *this;
@@ -434,6 +438,7 @@ void PatternAddressMapper::compute_mapping_stats(std::vector<AggressorAccessPatt
 size_t PatternAddressMapper::count_bitflips() const {
   size_t sum = 0;
   for (const auto &bf : bit_flips) sum += bf.size();
+  sum += corrected_bit_flips;
   return sum;
 }
 
