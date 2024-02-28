@@ -8,8 +8,8 @@
 
 // defines the program's arguments and their default values
 struct ProgramArguments {
-  // the duration of the fuzzing run in seconds
-  unsigned long runtime_limit = 10800;
+  // the duration of the fuzzing run in hours
+  size_t runtime_limit = 3;
   // path to logfile
   std::string logfile = "run.log";
   // path to JSON config

@@ -133,7 +133,7 @@ void Logger::log_failure(const std::string &message, bool newline) {
   if (newline) instance.logfile << std::endl;
 }
 
-void Logger::log_metadata(const char *commit_hash, BlacksmithConfig &config, unsigned long run_time_limit) {
+void Logger::log_metadata(const char *commit_hash, BlacksmithConfig &config, size_t run_time_limit) {
   Logger::log_info("General information about this fuzzing run:");
 
   char name[1024] = "";

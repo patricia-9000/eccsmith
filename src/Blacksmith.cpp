@@ -123,7 +123,7 @@ void handle_args(int argc, char **argv) {
       {"sync", {"-s", "--sync"}, "synchronize with REFRESH while hammering (default: present)", 0},
       {"sweeping", {"-w", "--sweeping"}, "sweep the best pattern over a contig. memory area after fuzzing (default: present)", 0},
 
-      {"runtime-limit", {"-t", "--runtime-limit"}, "number of seconds to run the fuzzer before sweeping/terminating (default: 10800)", 1},
+      {"runtime-limit", {"-t", "--runtime-limit"}, "number of hours to run the fuzzer before sweeping/terminating (default: 3)", 1},
       {"acts-per-ref", {"-a", "--acts-per-ref"}, "number of activations in a tREF interval, i.e., 7.8us (default: None)", 1},
       {"probes", {"-p", "--probes"}, "number of different DRAM locations to try each pattern on (default: NUM_BANKS/4)", 1},
     }};
@@ -160,7 +160,7 @@ void handle_args(int argc, char **argv) {
   program_args.sweeping = parsed_args.has_option("sweeping") || program_args.sweeping;
   Logger::log_debug(format_string("Set --sweeping=%s", (program_args.sweeping ? "true" : "false")));
 
-  program_args.runtime_limit = parsed_args["runtime-limit"].as<unsigned long>(program_args.runtime_limit);
+  program_args.runtime_limit = parsed_args["runtime-limit"].as<size_t>(program_args.runtime_limit);
   Logger::log_debug(format_string("Set --runtime_limit=%ld", program_args.runtime_limit));
 
   program_args.num_address_mappings_per_pattern = parsed_args["probes"].as<size_t>(program_args.num_address_mappings_per_pattern);

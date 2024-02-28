@@ -95,7 +95,7 @@ Except for the `--config` parameter all other parameters are optional.
     -w, --sweeping
         sweep the best pattern over a contig. memory area after fuzzing (default: true)
     -t, --runtime-limit
-        number of seconds to run the fuzzer before sweeping/terminating (default: 3 hours)
+        number of hours to run the fuzzer before sweeping/terminating (default: 3)
     -a, --acts-per-ref
         number of activations in a tREF interval, i.e., 7.8us (default: None)
     -p, --probes

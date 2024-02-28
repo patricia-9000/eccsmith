@@ -15,7 +15,7 @@ HammeringPattern FuzzyHammerer::hammering_pattern = HammeringPattern(); /* NOLIN
 void
 FuzzyHammerer::n_sided_frequency_based_hammering(BlacksmithConfig &config, DramAnalyzer &dramAnalyzer, Memory &memory,
                                                  uint64_t acts, bool fixed_acts_per_ref,
-                                                 unsigned long runtime_limit, size_t probes_per_pattern,
+                                                 size_t runtime_limit, size_t probes_per_pattern,
                                                  bool sweep_best_pattern) {
   std::mt19937 gen = std::mt19937(std::random_device()());
 

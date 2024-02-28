@@ -61,7 +61,7 @@ class Logger {
 
   static void log_config(BlacksmithConfig &config);
 
-  static void log_metadata(const char *commit_hash, BlacksmithConfig &config, unsigned long run_time_limit);
+  static void log_metadata(const char *commit_hash, BlacksmithConfig &config, size_t run_time_limit);
 
   static void log_analysis_stage(const std::string &message, bool newline = true);
 
