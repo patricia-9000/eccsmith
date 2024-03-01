@@ -19,9 +19,13 @@ ProgramArguments program_args;
 RasWatcher *ras_watcher;
 
 int main(int argc, char **argv) {
-  Logger::initialize(program_args.logfile);
+  Logger::initialize("/dev/stdout");
 
   handle_args(argc, argv);
+
+  Logger::close();
+  Logger::initialize(program_args.logfile);
+  Logger::stdout(true);
 
   // load config
   Logger::log_debug("Loading DRAM config");

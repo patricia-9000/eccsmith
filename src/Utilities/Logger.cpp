@@ -3,6 +3,8 @@
 #include <iostream>
 #include <GlobalDefines.hpp>
 #include <sqlite3.h>
+#include <ctime>
+#include <iomanip>
 
 // initialize the singleton instance
 Logger Logger::instance; /* NOLINT */
@@ -11,39 +13,41 @@ Logger::Logger() = default;
 
 void Logger::initialize(const std::string &logfile_filename) {
   instance.logfile = std::ofstream();
-  std::cout << "Eccsmith has started running" << std::endl
-            << "Details are being written to " FF_BOLD << logfile_filename << F_RESET << std::endl
-            << "Any detected bitflips will also be written to the console" << std::endl;
   instance.logfile.open(logfile_filename, std::ios::out | std::ios::trunc);
-  instance.timestamp_start = (unsigned long) time(nullptr);
 }
 
 void Logger::close() {
-  instance.logfile << std::endl;
   instance.logfile.close();
 }
 
+void Logger::stdout(bool set) {
+  instance.also_log_to_stdout = set;
+}
+
 void Logger::log_info(const std::string &message, bool newline) {
-  instance.logfile << FC_CYAN "[+] " << message;
-  instance.logfile << F_RESET;
-  if (newline) instance.logfile << std::endl;
+  std::stringstream ss;
+  ss << FC_CYAN "[+] " << message << F_RESET;
+  log_data(ss.str(), newline);
 }
 
 void Logger::log_highlight(const std::string &message, bool newline) {
-  instance.logfile << FC_MAGENTA << FF_BOLD << "[+] " << message;
-  instance.logfile << F_RESET;
+  instance.logfile << FC_MAGENTA << FF_BOLD << "[+] " << message << F_RESET;
   if (newline) instance.logfile << std::endl;
 }
 
 void Logger::log_error(const std::string &message, bool newline) {
-  instance.logfile << FC_RED "[-] " << message;
-  instance.logfile << F_RESET;
-  if (newline) instance.logfile << std::endl;
+  std::stringstream ss;
+  ss << FC_RED "[-] " << message << F_RESET;
+  log_data(ss.str(), newline);
 }
 
 void Logger::log_data(const std::string &message, bool newline) {
-  instance.logfile << message;
-  if (newline) instance.logfile << std::endl;
+  std::stringstream ss;
+  ss << message;
+  if (newline) ss << std::endl;
+  std::string out = ss.str();
+  instance.logfile << out;
+  if (instance.also_log_to_stdout) std::cout << out;
 }
 
 void Logger::log_analysis_stage(const std::string &message, bool newline) {
@@ -52,17 +56,16 @@ void Logger::log_analysis_stage(const std::string &message, bool newline) {
   // this makes sure that all log analysis stage messages have the same length
   auto remaining_chars = 80-message.length();
   while (remaining_chars--) ss << "█";
-  instance.logfile << ss.str();
-  instance.logfile << F_RESET;
+  instance.logfile << ss.str() << F_RESET;
   if (newline) instance.logfile << std::endl;
 }
 
 #define DEBUG
 void Logger::log_debug(const std::string &message, bool newline) {
 #ifdef DEBUG
-  instance.logfile << FC_YELLOW "[DEBUG] " << message;
-  instance.logfile << F_RESET;
-  if (newline) instance.logfile << std::endl;
+  std::stringstream ss;
+  ss << FC_YELLOW "[DEBUG] " << message << F_RESET;
+  log_data(ss.str(), newline);
 #else
   // this is just to ignore complaints of the compiler about unused params
   std::ignore = message;
@@ -102,8 +105,9 @@ void Logger::log_bitflip(volatile char *flipped_address, uint64_t row_no, unsign
      << F_RESET;
   if (newline) ss << std::endl;
   
-  instance.logfile << ss.str();
-  std::cout << ss.str();
+  std::string out = ss.str();
+  instance.logfile << out;
+  std::cout << out;
 }
 
 void Logger::log_corrected_bitflip(int count, unsigned long timestamp) {
@@ -113,8 +117,9 @@ void Logger::log_corrected_bitflip(int count, unsigned long timestamp) {
      << format_timestamp(timestamp - instance.timestamp_start) << "."
      << F_RESET << std::endl;
   
-  instance.logfile << ss.str();
-  std::cout << ss.str();
+  std::string out = ss.str();
+  instance.logfile << out;
+  std::cout << out;
 }
 
 void Logger::log_sql_error(int result_code) {
@@ -122,14 +127,12 @@ void Logger::log_sql_error(int result_code) {
 }
 
 void Logger::log_success(const std::string &message, bool newline) {
-  instance.logfile << FC_GREEN << "[!] " << message;
-  instance.logfile << F_RESET;
+  instance.logfile << FC_GREEN << "[!] " << message << F_RESET;
   if (newline) instance.logfile << std::endl;
 }
 
 void Logger::log_failure(const std::string &message, bool newline) {
-  instance.logfile << FC_RED_BRIGHT << "[-] " << message;
-  instance.logfile << F_RESET;
+  instance.logfile << FC_RED_BRIGHT << "[-] " << message << F_RESET;
   if (newline) instance.logfile << std::endl;
 }
 
@@ -139,14 +142,17 @@ void Logger::log_metadata(const char *commit_hash, BlacksmithConfig &config, siz
   char name[1024] = "";
   gethostname(name, sizeof name);
 
-  std::stringstream ss;
-  ss << "Start timestamp:: " << instance.timestamp_start << std::endl
-     << "Hostname: " << name << std::endl
-     << "Commit SHA: " << commit_hash << std::endl
-     << "Run time limit: " << run_time_limit << " hours";
-  Logger::log_data(ss.str());
+  instance.timestamp_start = (unsigned long) time(nullptr);
+  std::time_t proper_timestamp = instance.timestamp_start;
+  std::tm proper_time = *std::localtime(&proper_timestamp);
 
-  log_config(config);
+  std::stringstream ss;
+  ss << "Start time: " << std::put_time(&proper_time, "%R") << std::endl
+     << "Run time limit: " << run_time_limit << " hours" << std::endl
+     << "Config name: " << config.name << std::endl
+     << "Hostname: " << name << std::endl
+     << "Commit SHA: " << commit_hash;
+  Logger::log_data(ss.str());
 }
 
 void Logger::log_config(BlacksmithConfig &config) {
@@ -154,6 +160,6 @@ void Logger::log_config(BlacksmithConfig &config) {
   std::stringstream ss;
   nlohmann::json json = config;
   ss << "Config:" << json.dump() << std::endl
-     << "PAGE_SIZE: " << getpagesize() << std::endl;
+     << "PAGE_SIZE: " << getpagesize();
   Logger::log_data(ss.str());
 }

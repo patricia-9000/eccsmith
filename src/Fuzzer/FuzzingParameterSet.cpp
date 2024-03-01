@@ -159,7 +159,6 @@ void FuzzingParameterSet::randomize_parameters(bool print) {
   hammering_total_num_activations = 5000000;
 
   max_row_no = DRAMAddr::get_row_count();
-  Logger::log_info(format_string("FuzzingParameter::randomize_parameters: set max_row_no to %lu\n",max_row_no));
 
   // █████████ SEMI-DYNAMIC FUZZING PARAMETERS ████████████████████████████████████████████████████
   // are only randomized once when calling this function

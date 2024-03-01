@@ -30,6 +30,8 @@ class Logger {
   // the logger instance (a singleton)
   static Logger instance;
 
+  bool also_log_to_stdout = false;
+
   static std::string format_timestamp(unsigned long ts);
 
   unsigned long timestamp_start{};
@@ -39,6 +41,8 @@ class Logger {
   static void initialize(const std::string &logfile_filename);
 
   static void close();
+
+  static void stdout(bool set);
 
   static void log_info(const std::string &message, bool newline = true);
 

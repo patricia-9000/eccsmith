@@ -19,8 +19,8 @@ FuzzyHammerer::n_sided_frequency_based_hammering(BlacksmithConfig &config, DramA
                                                  bool sweep_best_pattern) {
   std::mt19937 gen = std::mt19937(std::random_device()());
 
-  Logger::log_info(
-      format_string("Starting frequency-based fuzzer run with time limit of %lu hours.", runtime_limit));
+  Logger::log_info(format_string("Fuzzing has started. Details are being written to %s. Any detected bitflips will also be written to the console.", program_args.logfile.c_str()));
+  Logger::stdout(false);
 
   // make sure that this is empty (e.g., from previous call to this function)
   map_pattern_mappings_bitflips.clear();

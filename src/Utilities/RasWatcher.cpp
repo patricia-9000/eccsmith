@@ -13,7 +13,7 @@ RasWatcher::RasWatcher() {
   int ret = sqlite3_open_v2("/var/lib/rasdaemon/ras-mc_event.db", &ras_db, SQLITE_OPEN_READONLY, NULL);
   if (ret != SQLITE_OK) Logger::log_sql_error(ret);
   fetch_new_corrections();
-  Logger::log_info(format_string("Opened connection to Rasdaemon database, with %d total ECC corrections on record.", total_corrections));
+  Logger::log_info(format_string("Opening connection to Rasdaemon database, with a total of %d prior ECC corrections on record.", total_corrections));
 }
 
 RasWatcher::~RasWatcher() {
