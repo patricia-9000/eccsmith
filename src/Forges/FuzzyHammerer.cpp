@@ -112,7 +112,7 @@ FuzzyHammerer::n_sided_frequency_based_hammering(BlacksmithConfig &config, DramA
       // repeat measuring the number of possible activations per tREF as it might be that the current value is not optimal
       fuzzing_params.set_num_activations_per_t_refi(static_cast<int>(dramAnalyzer.count_acts_per_trefi()));
       Logger::log_info(
-          format_string("Recomputed number of ACTs per tREF (old: %d, new: %d).",
+          format_string("Recomputed number of row activations per refresh interval (old: %d, new: %d).",
                         old_nacts,
                         fuzzing_params.get_num_activations_per_t_refi()));
     }

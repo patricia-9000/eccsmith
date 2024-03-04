@@ -23,6 +23,9 @@ size_t DramAnalyzer::count_acts_per_trefi() {
 }
 
 size_t DramAnalyzer::count_acts_per_trefi(volatile char *a, volatile char *b) {
+  uint64_t acts_per_ref;
+  size_t start_threshold = 500;
+
   size_t skip_first_N = 50;
   std::vector<uint64_t> acts;
   uint64_t running_sum = 0;
@@ -30,6 +33,7 @@ size_t DramAnalyzer::count_acts_per_trefi(volatile char *a, volatile char *b) {
   uint64_t after;
   uint64_t count = 0;
   uint64_t count_old = 0;
+  size_t threshold = start_threshold;
 
   // computes the standard deviation
   auto compute_std = [](std::vector<uint64_t> &values, uint64_t running_sum, size_t num_numbers) {
@@ -61,22 +65,47 @@ size_t DramAnalyzer::count_acts_per_trefi(volatile char *a, volatile char *b) {
     after = rdtscp();
 
     count++;
-    if ((after - before) > 1000) {
+    if ((after - before) > threshold) {
       if (i > skip_first_N && count_old!=0) {
         // multiply by 2 to account for both accesses we do (a, b)
         uint64_t value = (count - count_old)*2;
         acts.push_back(value);
         running_sum += value;
-        // check after each 200 data points if our standard deviation reached 1 -> then stop collecting measurements
-        if ((acts.size()%200)==0 && compute_std(acts, running_sum, acts.size())<3.0) break;
+        // check the standard deviation after every 200 rounds
+        if ((acts.size()%200)==0)
+        {
+          double std = compute_std(acts, running_sum, acts.size());
+          // a standard deviation of less than 3 means the average will probably be accurate, so we go ahead with these measurements
+          if (std < 3.0) {
+            acts_per_ref = running_sum / acts.size();
+            if (acts_per_ref <= 5) {
+              acts.clear();
+              running_sum = 0;
+              i = 0;
+              Logger::log_debug("Acts per ref too low");
+            } else {
+              Logger::log_info(format_string("Determined number of row activations per refresh interval to be %lu.", acts_per_ref));
+              break;
+            }
+          // if 2000 rounds (10 checks) pass before either of these come true, restart with a higher threshold
+          } else if (acts.size() >= 2000) {
+            acts.clear();
+            running_sum = 0;
+            i = 0;
+            if (threshold < start_threshold + 200) {
+              if (threshold == start_threshold)
+                Logger::log_debug("Too many rounds, increasing threshold");
+              threshold += 10;
+            } else {
+              threshold = start_threshold;
+              Logger::log_debug(format_string("Threshold too high, resetting to %zu", start_threshold));
+            }
+          }
+        }
       }
       count_old = count;
     }
   }
 
-  auto activations = (running_sum/acts.size());
-  Logger::log_info(format_string("Determined the number of possible ACTs per refresh interval after %d rounds.", acts.size()));
-  Logger::log_data(format_string("num_acts_per_tREFI: %lu", activations));
-
-  return activations;
+  return acts_per_ref;
 }
