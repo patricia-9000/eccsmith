@@ -35,7 +35,6 @@ size_t DramAnalyzer::determine_conflict_thresh(volatile char *base, volatile cha
   Logger::log_debug("Determining row conflict threshold");
 
   // Measure row conflict timing
-  Logger::log_info(format_string("Measuring %lu samples for differing rows", THRESH_SAMPLES));
   uint64_t conf_sum = 0;
   for (size_t sample_idx = 0; sample_idx < THRESH_SAMPLES; sample_idx++) {
     conf_sum += measure_time(base, diff, 1000);
@@ -43,7 +42,6 @@ size_t DramAnalyzer::determine_conflict_thresh(volatile char *base, volatile cha
   uint64_t conf_avg = conf_sum / THRESH_SAMPLES;
 
   // Measure row hit timing
-  Logger::log_info(format_string("Measuring %lu samples for same row", THRESH_SAMPLES));
   uint64_t hit_sum = 0;
   for (size_t sample_idx = 0; sample_idx < THRESH_SAMPLES; sample_idx++) {
     hit_sum += measure_time(base, same, 1000);
