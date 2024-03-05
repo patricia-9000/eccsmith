@@ -54,7 +54,7 @@ int main(int argc, char **argv) {
       for(size_t rowB = rowA+1; rowB < row_count; rowB++) {
         auto addrA = DRAMAddr(bank,rowA,0);
         auto addrB = DRAMAddr(bank,rowB,0);
-        auto timing = DramAnalyzer::measure_time((volatile char*)addrA.to_virt(),(volatile char*)addrB.to_virt(), config.drama_rounds);
+        auto timing = DramAnalyzer::measure_time((volatile char*)addrA.to_virt(),(volatile char*)addrB.to_virt(), 1000);
         outFile << bank << ","
                 << rowA << ","
                 << rowB << ","

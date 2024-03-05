@@ -55,7 +55,6 @@ add_library(
         include/Utilities/TimeHelper.hpp
         src/Forges/FuzzyHammerer.cpp
         src/Forges/ReplayingHammerer.cpp
-        src/Forges/TraditionalHammerer.cpp
         src/Fuzzer/Aggressor.cpp
         src/Fuzzer/AggressorAccessPattern.cpp
         src/Fuzzer/BitFlip.cpp
@@ -165,46 +164,21 @@ target_link_libraries(
         SQLite::SQLite3
 )
 
-# === DetermineConflictTiming Tool # === BLACKSMITH ============================
+# === CheckAddrFunction Tool ===================================================
 
-add_executable(
-        determineConflictThresh
-        src/Utilities/DetermineConflictThresh.cpp
-)
+#add_executable(
+#        checkAddrFunction
+#        src/Utilities/CheckAddrFunction.cpp
+#)
 
-target_link_libraries(
-        determineConflictThresh
-        PRIVATE
-        bs
-        argagg
-        SQLite::SQLite3
-)
+#target_link_libraries(
+#        checkAddrFunction
+#        PRIVATE
+#        bs
+#        argagg
+#        SQLite::SQLite3
+#)
 
-add_executable(
-        determineActsPerRef
-        src/Utilities/DetermineActsPerRef.cpp
-)
-
-target_link_libraries(
-        determineActsPerRef
-        PRIVATE
-        bs
-        argagg
-        SQLite::SQLite3
-)
-
-add_executable(
-        checkAddrFunction
-        src/Utilities/CheckAddrFunction.cpp
-)
-
-target_link_libraries(
-        checkAddrFunction
-        PRIVATE
-        bs
-        argagg
-        SQLite::SQLite3
-)
 # === CLEANUP ==================================================================
 
 unset(BLACKSMITH_ENABLE_JSON_EXPORT CACHE)

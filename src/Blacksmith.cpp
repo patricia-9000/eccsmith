@@ -8,7 +8,6 @@
 #include <string>
 #include <array>
 
-#include "Forges/TraditionalHammerer.hpp"
 #include "Forges/FuzzyHammerer.hpp"
 #include "Utilities/BlacksmithConfig.hpp"
 
@@ -55,13 +54,11 @@ int main(int argc, char **argv) {
   // initialize the DRAMAddr class to load the proper memory configuration
   DRAMAddr::initialize(memory.get_starting_address());
 
-  // count the number of possible activations per refresh interval, if not given as program argument
-  uint64_t acts_per_trefi = config.acts_per_trefi;
-  if (acts_per_trefi == 0)
-    acts_per_trefi = dram_analyzer.count_acts_per_trefi();
+  // count the number of possible activations per refresh interval
+  uint64_t acts_per_trefi = dram_analyzer.count_acts_per_trefi();
   
   // start the rasdaemon watcher
-  Logger::log_debug("Connecting to Rasdaemon database...");
+  Logger::log_debug("Connecting to Rasdaemon database");
   ras_watcher = new RasWatcher();
 
   Logger::log_debug("Jumping to hammering logic");
@@ -73,19 +70,12 @@ int main(int argc, char **argv) {
     } else {
       replayer.replay_patterns(program_args.load_json_filename, program_args.pattern_ids);
     }
-  } else if (program_args.do_fuzzing && program_args.use_synchronization) {
+  } else {
     FuzzyHammerer::n_sided_frequency_based_hammering(config, dram_analyzer, memory,
-                                                     acts_per_trefi, config.acts_per_trefi != 0,
+                                                     acts_per_trefi,
                                                      program_args.runtime_limit,
                                                      program_args.num_address_mappings_per_pattern,
                                                      program_args.sweeping);
-  } else if (!program_args.do_fuzzing) {
-//    TraditionalHammerer::n_sided_hammer(memory, program_args.acts_per_trefi, program_args.runtime_limit);
-//    TraditionalHammerer::n_sided_hammer_experiment(memory, program_args.acts_per_trefi);
-    TraditionalHammerer::n_sided_hammer_experiment_frequencies(config, memory);
-  } else {
-    Logger::log_error("Invalid combination of program control-flow arguments given. "
-                      "Note: Fuzzing is only supported with synchronized hammering.");
   }
 
   Logger::close();
@@ -117,18 +107,15 @@ void handle_args(int argc, char **argv) {
 
       {"config", {"-c", "--config"}, "loads the specified config file (JSON) as DRAM address config.", 1},
 
-      {"fuzzing", {"-f", "--fuzzing"}, "perform a fuzzing run (default program mode)", 0},
       {"generate-patterns", {"-g", "--generate-patterns"}, "generates N patterns, but does not perform hammering; used by ARM port", 1},
       {"replay-patterns", {"-y", "--replay-patterns"}, "replays patterns given as comma-separated list of pattern IDs", 1},
-      {"logfile", {"-l", "--logfile"}, "log to specified file (default: run.log)", 1},
       {"load-json", {"-j", "--load-json"}, "loads the specified JSON file generated in a previous fuzzer run, loads patterns given by --replay-patterns or determines the best ones", 1},
 
-      // note that these two parameters don't require a value, their presence already equals a "true"
-      {"sync", {"-s", "--sync"}, "synchronize with REFRESH while hammering (default: present)", 0},
+      // note that this parameter doesn't require a value, its presence already equals a "true"
       {"sweeping", {"-w", "--sweeping"}, "sweep the best pattern over a contig. memory area after fuzzing (default: present)", 0},
 
       {"runtime-limit", {"-t", "--runtime-limit"}, "number of hours to run the fuzzer before sweeping/terminating (default: 3)", 1},
-      {"acts-per-ref", {"-a", "--acts-per-ref"}, "number of activations in a tREF interval, i.e., 7.8us (default: None)", 1},
+      {"logfile", {"-l", "--logfile"}, "log to specified file (default: run.log)", 1},
       {"probes", {"-p", "--probes"}, "number of different DRAM locations to try each pattern on (default: NUM_BANKS/4)", 1},
     }};
 
@@ -190,9 +177,5 @@ void handle_args(int argc, char **argv) {
     } else {
       program_args.pattern_ids = std::unordered_set<std::string>();
     }
-  } else {
-    program_args.do_fuzzing = parsed_args["fuzzing"].as<bool>(true);
-    const bool default_sync = true;
-    program_args.use_synchronization = parsed_args.has_option("sync") || default_sync;
   }
 }

@@ -24,9 +24,6 @@ struct ProgramArguments {
   size_t num_dram_locations_per_mapping = 3;
   // whether to sweep the 'best pattern' that was found during fuzzing afterward over a contiguous chunk of memory
   bool sweeping = true;
-  // these two parameters define the default program mode: do fuzzing and synchronize with REFRESH
-  bool do_fuzzing = true;
-  bool use_synchronization = true;
   size_t generate_patterns = 0;
 };
 
