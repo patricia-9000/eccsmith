@@ -164,31 +164,7 @@ target_link_libraries(
         SQLite::SQLite3
 )
 
-# === DetermineConflictTiming Tool # === BLACKSMITH ============================
-
-#add_executable(
-#        determineConflictThresh
-#        src/Utilities/DetermineConflictThresh.cpp
-#)
-
-#target_link_libraries(
-#        determineConflictThresh
-#        PRIVATE
-#        bs
-#        argagg
-#)
-
-#add_executable(
-#        determineActsPerRef
-#        src/Utilities/DetermineActsPerRef.cpp
-#)
-
-#target_link_libraries(
-#        determineActsPerRef
-#        PRIVATE
-#        bs
-#        argagg
-#)
+# === CheckAddrFunction Tool ===================================================
 
 #add_executable(
 #        checkAddrFunction
@@ -201,6 +177,7 @@ target_link_libraries(
 #        bs
 #        argagg
 #)
+
 # === CLEANUP ==================================================================
 
 unset(BLACKSMITH_ENABLE_JSON_EXPORT CACHE)
