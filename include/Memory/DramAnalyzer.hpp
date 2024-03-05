@@ -23,6 +23,11 @@ class DramAnalyzer {
 
   std::uniform_int_distribution<int> dist;
 
+  #define THRESH_SAMPLES 10000
+
+  //Determine the number of clock ticks which differentiates between a row hit and a row miss
+  static size_t determine_conflict_thresh(volatile char *base, volatile char *diff, volatile char *same);
+
  public:
   explicit DramAnalyzer(BlacksmithConfig &config, volatile char *target);
 
@@ -48,7 +53,7 @@ class DramAnalyzer {
   /// Determine the number of possible activations within a refresh interval.
   size_t count_acts_per_trefi();
 
-  static size_t count_acts_per_trefi(volatile char *a, volatile char*b);
+  static size_t count_acts_per_trefi(volatile char *base, volatile char *diff, size_t start_threshold);
 };
 
 #endif /* DRAMANALYZER */

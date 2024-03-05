@@ -51,7 +51,6 @@ int main(int argc, char **argv) {
   DRAMAddr::initialize(memory.get_starting_address());
 
   // count the number of possible activations per refresh interval
-  Logger::log_debug("Determining acts_per_trefi");
   uint64_t acts_per_trefi = dram_analyzer.count_acts_per_trefi();
   
   // start the rasdaemon watcher
