@@ -49,7 +49,8 @@ int main(int argc, char **argv) {
   DRAMAddr::initialize(memory.get_starting_address());
 
   // count the number of possible activations per refresh interval
-  uint64_t acts_per_trefi = dram_analyzer.count_acts_per_trefi();
+  // and check the correctness of the memory mapping function in the config
+  uint64_t acts_per_trefi = dram_analyzer.analyze_dram(true);
   
   // start the rasdaemon watcher
   Logger::log_debug("Connecting to Rasdaemon database");

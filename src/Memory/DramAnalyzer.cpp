@@ -10,7 +10,7 @@ DramAnalyzer::DramAnalyzer(BlacksmithConfig &config, volatile char *target) :
   dist = std::uniform_int_distribution<>(0, std::numeric_limits<int>::max());
 }
 
-size_t DramAnalyzer::count_acts_per_trefi() {
+size_t DramAnalyzer::analyze_dram(bool check) {
   DRAMAddr base((void*)start_address);
   DRAMAddr diff = base.add(0, 1, 0);
   DRAMAddr same = base.add(0, 0, 1);
@@ -28,6 +28,7 @@ size_t DramAnalyzer::count_acts_per_trefi() {
   volatile char* same_virt = (volatile char*)same.to_virt();
 
   size_t thresh = determine_conflict_thresh(base_virt, diff_virt, same_virt);
+  if (check) check_addr_function(thresh);
   return count_acts_per_trefi(base_virt, diff_virt, thresh);
 }
 
@@ -54,6 +55,34 @@ size_t DramAnalyzer::determine_conflict_thresh(volatile char *base, volatile cha
   uint64_t thresh = hit_avg + ((conf_avg - hit_avg) / 2);
   Logger::log_info(format_string("Determined row conflict threshold to be %lu.", thresh));
   return thresh;
+}
+
+//
+// This method uses some modified code from CheckAddrFunction.cpp created by Luca Wilke
+//
+void DramAnalyzer::check_addr_function(size_t thresh) {
+  size_t bank_count = DRAMAddr::get_bank_count();
+  size_t row_count = DRAMAddr::get_row_count();
+  size_t checked_banks = 4;
+  if (bank_count < checked_banks)
+    checked_banks = bank_count;
+
+  for(size_t bank = 0; bank < checked_banks; bank++) {
+    for(size_t row = 1; row < row_count; row++) {
+      auto addrA = DRAMAddr(bank,0,0);
+      auto addrB = DRAMAddr(bank,row,0);
+      auto timing = DramAnalyzer::measure_time((volatile char*)addrA.to_virt(),(volatile char*)addrB.to_virt(), 1000);
+      if(timing < thresh) {
+        Logger::log_error(format_string("Measured access time of %lu for two supposedly conflicting rows, "
+                                        "which is below the row conflict threshold of %lu.",
+                                        timing, thresh));
+        Logger::log_error("The chosen config file may not be compatible with your system.");
+        exit(1);
+      }
+    }
+  }
+
+  Logger::log_info("Selected config file has been checked, and seems to be correct.");
 }
 
 size_t DramAnalyzer::count_acts_per_trefi(volatile char *base, volatile char *diff, size_t start_threshold) {

@@ -163,21 +163,6 @@ target_link_libraries(
         SQLite::SQLite3
 )
 
-# === CheckAddrFunction Tool ===================================================
-
-#add_executable(
-#        checkAddrFunction
-#        src/Utilities/CheckAddrFunction.cpp
-#)
-
-#target_link_libraries(
-#        checkAddrFunction
-#        PRIVATE
-#        bs
-#        argagg
-#        SQLite::SQLite3
-#)
-
 # === CLEANUP ==================================================================
 
 unset(BLACKSMITH_ENABLE_JSON_EXPORT CACHE)
