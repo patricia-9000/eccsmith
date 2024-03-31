@@ -31,6 +31,9 @@ size_t DramAnalyzer::count_acts_per_trefi() {
   return count_acts_per_trefi(base_virt, diff_virt, thresh);
 }
 
+//
+// This method uses some modified code from DetermineConflictThresh.cpp created by Luca Wilke
+//
 size_t DramAnalyzer::determine_conflict_thresh(volatile char *base, volatile char *diff, volatile char *same) {
   Logger::log_debug("Determining row conflict threshold");
 
