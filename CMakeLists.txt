@@ -54,7 +54,6 @@ add_library(
         include/GlobalDefines.hpp
         include/Utilities/TimeHelper.hpp
         src/Forges/FuzzyHammerer.cpp
-        src/Forges/ReplayingHammerer.cpp
         src/Fuzzer/Aggressor.cpp
         src/Fuzzer/AggressorAccessPattern.cpp
         src/Fuzzer/BitFlip.cpp

@@ -8,7 +8,6 @@
 
 #include "Fuzzer/HammeringPattern.hpp"
 #include "Memory/Memory.hpp"
-#include "Forges/ReplayingHammerer.hpp"
 
 class FuzzyHammerer {
  public:
@@ -31,9 +30,7 @@ class FuzzyHammerer {
 
   static void
   n_sided_frequency_based_hammering(BlacksmithConfig &config, DramAnalyzer &dramAnalyzer, Memory &memory,
-                                    uint64_t acts, size_t runtime_limit, size_t probes_per_pattern, bool sweep_best_pattern);
-
-  static void test_location_dependence(ReplayingHammerer &rh, HammeringPattern &pattern);
+                                    uint64_t acts, size_t runtime_limit, size_t probes_per_pattern);
 
   static void probe_mapping_and_scan(PatternAddressMapper &mapper, Memory &memory,
                                      FuzzingParameterSet &fuzzing_params, size_t num_dram_locations);

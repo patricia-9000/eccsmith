@@ -4,7 +4,6 @@
 
 #include "Utilities/TimeHelper.hpp"
 #include "Fuzzer/PatternBuilder.hpp"
-#include "Forges/ReplayingHammerer.hpp"
 
 // initialize the static variables
 size_t FuzzyHammerer::cnt_pattern_probes = 0UL;
@@ -14,8 +13,7 @@ HammeringPattern FuzzyHammerer::hammering_pattern = HammeringPattern(); /* NOLIN
 
 void
 FuzzyHammerer::n_sided_frequency_based_hammering(BlacksmithConfig &config, DramAnalyzer &dramAnalyzer, Memory &memory,
-                                                 uint64_t acts, size_t runtime_limit, size_t probes_per_pattern,
-                                                 bool sweep_best_pattern) {
+                                                 uint64_t acts, size_t runtime_limit, size_t probes_per_pattern) {
   std::mt19937 gen = std::mt19937(std::random_device()());
 
   Logger::log_info(format_string("Fuzzing has started. Details are being written to %s. Any detected bitflips will also be written to the console.", program_args.logfile.c_str()));
@@ -26,8 +24,6 @@ FuzzyHammerer::n_sided_frequency_based_hammering(BlacksmithConfig &config, DramA
 
   FuzzingParameterSet fuzzing_params(acts);
   fuzzing_params.print_static_parameters();
-
-  ReplayingHammerer replaying_hammerer(config, memory);
 
 #ifdef ENABLE_JSON
   nlohmann::json arr = nlohmann::json::array();
@@ -148,137 +144,6 @@ FuzzyHammerer::n_sided_frequency_based_hammering(BlacksmithConfig &config, DramA
   json_export << root << std::endl;
   json_export.close();
 #endif
-
-  // define the location where we are going to do the large sweep
-  DRAMAddr sweep_start = DRAMAddr(
-      Range<int>(0, config.total_banks-1).get_random_number(gen),
-      Range<int>(0, 4095).get_random_number(gen),
-      0);
-
-  size_t SWEEP_MEM_SIZE_BEST_PATTERN = 2*1024*1024; // in bytes
-  Logger::log_info(format_string("Doing a sweep of %d MB to determine most effective pattern.",
-      SWEEP_MEM_SIZE_BEST_PATTERN));
-
-  // store for each (pattern, mapping) the number of observed bit flips during sweep
-  struct PatternMappingStat {
-    std::string pattern_id;
-    std::string mapping_id;
-  };
-  std::map<size_t, PatternMappingStat, std::greater<>> patterns_stat;
-
-  for (auto &patt : effective_patterns) {
-    for (auto &mapping : patt.address_mappings) {
-      //  move the pattern to the target DRAM location
-      mapping.remap_aggressors(sweep_start);
-
-      // do the minisweep
-      SweepSummary summary = replaying_hammerer.sweep_pattern(patt, mapping, 10, SWEEP_MEM_SIZE_BEST_PATTERN, {});
-
-      PatternMappingStat pms;
-      pms.pattern_id = patt.instance_id;
-      pms.mapping_id = mapping.get_instance_id();
-      patterns_stat.emplace(summary.observed_bitflips.size(), pms);
-    }
-  }
-
-  // printout - just for debugging
-  Logger::log_info("Summary of minisweep:");
-  Logger::log_data(
-      format_string("%4s\t%-6s\t%-8s\t%-8s", "Rank", "#Flips", "Pattern ID", "Mapping ID\n"));
-  int rank = 1;
-  for (const auto &[k,v] : patterns_stat) {
-    Logger::log_data(format_string("%4d\t%6d\t%-8s\t%-8s",
-        rank, k, v.pattern_id.substr(0,8).c_str(), v.mapping_id.substr(0,8).c_str()));
-    rank++;
-  }
-
-  // do sweep with the pattern that performed best in the minisweep
-  const std::string best_pattern_id = patterns_stat.begin()->second.pattern_id;
-  Logger::log_info(format_string("best_pattern_id = %s", best_pattern_id.c_str()));
-
-  const std::string best_pattern_mapping_id = patterns_stat.begin()->second.mapping_id;
-  Logger::log_info(format_string("best_pattern_mapping_id = %s", best_pattern_mapping_id.c_str()));
-
-  if (!sweep_best_pattern){
-    return;
-  }
-
-  size_t num_bitflips_sweep = 0;
-  for (const auto &[k,v] : patterns_stat) {
-    // find the pattern in the effective_patterns list as patterns_stat just contains the pattern/mapping ID
-    auto target_pattern_id = v.pattern_id;
-    auto best_pattern_for_sweep = std::find_if(effective_patterns.begin(), effective_patterns.end(), [&](auto &pattern) {
-      return pattern.instance_id == target_pattern_id;
-    });
-    if (best_pattern_for_sweep == effective_patterns.end()) {
-      Logger::log_error(format_string("Could not find pattern %s in effective patterns list.",
-          target_pattern_id.c_str()));
-      continue;
-    }
-
-    // remove all mappings from best pattern except the 'best mapping' because the sweep function does otherwise not
-    // know which the best mapping is
-    for (auto it = best_pattern_for_sweep->address_mappings.begin(); it != best_pattern_for_sweep->address_mappings.end(); ) {
-      if (it->get_instance_id() != best_pattern_mapping_id) {
-        it = best_pattern_for_sweep->address_mappings.erase(it);
-      } else {
-        ++it;
-      }
-    }
-
-    // do sweep with 1x256MB of memory
-    replaying_hammerer.set_params(fuzzing_params);
-    num_bitflips_sweep = replaying_hammerer.replay_patterns_brief({*best_pattern_for_sweep},
-        MB(256), 1, true);
-
-    // if the sweep was not successful, we take the next best pattern and repeat
-    if (num_bitflips_sweep > 0)
-      break;
-  }
-}
-
-void FuzzyHammerer::test_location_dependence(ReplayingHammerer &rh, HammeringPattern &pattern) {
-  // find the most effective mapping of the given pattern by looking into data collected before
-  Logger::log_info(format_string("[test_location_dependence] Finding best mapping for given pattern (%s).",
-      pattern.instance_id.c_str()));
-  PatternAddressMapper &best_mapping = pattern.get_most_effective_mapping();
-  Logger::log_info(format_string("[test_location_dependence] Best mapping (%s) triggered %d bit flips.",
-      best_mapping.get_instance_id().c_str(), best_mapping.count_bitflips()));
-
-  // determine the aggressor pairs that triggered the bit flip
-  Logger::log_info("[test_location_dependence] Finding the direct effective aggressors.");
-  std::unordered_set<AggressorAccessPattern> direct_effective_aggs;
-  ReplayingHammerer::find_direct_effective_aggs(pattern, best_mapping, direct_effective_aggs);
-  Logger::log_info(format_string("[test_location_dependence] Found %zu direct effective aggressors.",
-      direct_effective_aggs.size()));
-
-  // copy the mapping
-  Logger::log_info("[test_location_dependence] Copying the original pattern.");
-
-  // do a sweep over N rows where we move all aggressor pairs each time by 1 row
-  Logger::log_info("[test_location_dependence] Doing sweep 1/2: moving all aggressor pairs.");
-  SweepSummary ss_move_all = rh.sweep_pattern(pattern, best_mapping, 1, MB(8));
-
-  // restore the copied mapping to have the same start position (this should help in avoiding wrong results due to
-  // memory regions that are differently vulnerable)
-  Logger::log_info("[test_location_dependence] Restoring original mapping to get same start row.");
-
-  // do a sweep over N rows where we only move the aggressor pair that triggered the bit flip each time by 1 row
-  Logger::log_info("[test_location_dependence] Doing sweep 2/2: moving only effective agg pairs.");
-  SweepSummary ss_move_selected = rh.sweep_pattern(pattern, best_mapping, 1, MB(8), direct_effective_aggs);
-
-  // compare number of bit flips
-  bool is_location_dependent = (ss_move_selected.observed_bitflips.size() > ss_move_all.observed_bitflips.size());
-  Logger::log_info(format_string(
-      "[test_location_dependence] Comparing #bit flips: all %zu vs selected %zu  => location-dependent: %s",
-      ss_move_all.observed_bitflips.size(),
-      ss_move_selected.observed_bitflips.size(),
-      is_location_dependent ? "YES" : "NO"));
-
-  // write True in is_location_dependent in HammeringPattern in case that fixing the 'random' aggressors leads to better
-  // results than moving everything
-  Logger::log_info("[test_location_dependence] Writing is_location_dependent into HammeringPattern.");
-  pattern.is_location_dependent = is_location_dependent;
 }
 
 void FuzzyHammerer::probe_mapping_and_scan(PatternAddressMapper &mapper, Memory &memory,
