@@ -8,8 +8,6 @@ Eccsmith is a modified and repurposed version of [Blacksmith](https://github.com
 
 Eccsmith has been verified to work on Ubuntu 22.04.4 LTS.
 
-**This project is stil being developed and adapted from Blacksmith! The rest of this readme is a work in progress!**
-
 ## Step 1 - Build
 
 First, you must have g++ (version 8 or above) and cmake (version 3.14 or above) installed. Then simply run the build script, which will build Eccsmith with all of its dependencies:
@@ -96,6 +94,8 @@ Run the `eccsmith` executable located in the `build` directory. It must be run w
 sudo ./build/eccsmith -c config/coffee-lake-1-1-2-32.json
 ```
 
+Eccsmith runs for a maximum of 3 hours by default. It may end earlier if it gathers enough information before then. Once the Rowhammer fuzzing stage of the run begins, it will print details of any ECC corrections or uncorrected bit flips it encounters to the terminal. When the run ends, a verdict on ECC's functionality will be displayed. In-depth details of each run are logged to `run.log` by default.
+
 The following is a list of all suppported arguments:
 
 ```
@@ -106,31 +106,15 @@ The following is a list of all suppported arguments:
 
     -c, --config
         path to JSON file containing the memory configuration to use. See below for sample configuration 
-    
-==== Execution Modes ==============================================
-
-    -g, --generate-patterns
-        generates N patterns, but does not perform hammering; used by ARM port
-    -y, --replay-patterns <csv-list>
-        replays patterns given as comma-separated list of pattern IDs
-
-==== Replaying-Specific Configuration =============================
-
-    -j, --load-json
-        loads the specified JSON file generated in a previous fuzzer run, required for --replay-patterns
         
-==== Fuzzing-Specific Configuration =============================
+==== Optional Parameters ===================================
 
-    -w, --sweeping
-        sweep the best pattern over a contig. memory area after fuzzing (default: true)
-    -l, --logfile
-        log to specified file (default: run.log)
     -t, --runtime-limit
         number of hours to run the fuzzer before sweeping/terminating (default: 3)
+    -l, --logfile
+        log to specified file (default: run.log)
     -p, --probes
-        number of different DRAM locations to try each pattern on (default: NUM_BANKS/4)
+        number of different DRAM locations to try each pattern on (default: 3)
 
 ```
-
-After finishing a run, you can find a `fuzz-summary.json` that contains the information from the log file in a machine-processable format. In case you passed the `--sweeping` flag, you can additionally find a `sweep-summary-*.json` file that contains the information of the sweeping pass.
 
