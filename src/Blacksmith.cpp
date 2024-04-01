@@ -77,12 +77,13 @@ void handle_args(int argc, char **argv) {
   argagg::parser argparser{{
       {"help", {"-h", "--help"}, "shows this help message", 0},
 
-      {"config", {"-c", "--config"}, "loads the specified config file (JSON) as DRAM address config.", 1},
+      {"config", {"-c", "--config"}, "loads the specified config file (JSON) as DRAM address config", 1},
 
       {"runtime-limit", {"-t", "--runtime-limit"}, "number of hours to run the fuzzer before terminating (default: 3)", 1},
       {"logfile", {"-l", "--logfile"}, "log to specified file (default: run.log)", 1},
       
       {"probes", {"-p", "--probes"}, "number of different DRAM locations to try each pattern on (default: 3)", 1},
+      {"effective-patterns", {"-e", "--effective-patterns"}, "number of effective hammering patterns to be found for a run to end before its runtime limit (default: 3)", 1}
     }};
 
   argagg::parser_results parsed_args;
@@ -103,7 +104,7 @@ void handle_args(int argc, char **argv) {
    */
   if (parsed_args.has_option("config")) {
       program_args.config = parsed_args["config"].as<std::string>("");
-      Logger::log_debug(format_string("Set --config=%s", program_args.config.c_str()));
+      Logger::log_debug(format_string("Set --config = %s", program_args.config.c_str()));
   } else {
       Logger::log_error("Program argument '--config <string>' is mandatory! Cannot continue.");
       exit(EXIT_FAILURE);
@@ -113,11 +114,14 @@ void handle_args(int argc, char **argv) {
   * optional parameters
   */
   program_args.runtime_limit = parsed_args["runtime-limit"].as<size_t>(program_args.runtime_limit);
-  Logger::log_debug(format_string("Set --runtime_limit=%ld", program_args.runtime_limit));
+  Logger::log_debug(format_string("Set --runtime_limit = %ld", program_args.runtime_limit));
   
   program_args.logfile = parsed_args["logfile"].as<std::string>(program_args.logfile);
-  Logger::log_debug(format_string("Set --logfile=%s", program_args.logfile.c_str()));
+  Logger::log_debug(format_string("Set --logfile = %s", program_args.logfile.c_str()));
 
-  program_args.num_address_mappings_per_pattern = parsed_args["probes"].as<size_t>(program_args.num_address_mappings_per_pattern);
-  Logger::log_debug(format_string("Set --probes=%d", program_args.num_address_mappings_per_pattern));
+  program_args.num_dram_locations_per_mapping = parsed_args["probes"].as<size_t>(program_args.num_dram_locations_per_mapping);
+  Logger::log_debug(format_string("Set --probes = %d", program_args.num_dram_locations_per_mapping));
+  
+  program_args.effective_patterns = parsed_args["effective-patterns"].as<size_t>(program_args.effective_patterns);
+  Logger::log_debug(format_string("Set --effective-patterns = %d", program_args.effective_patterns));
 }

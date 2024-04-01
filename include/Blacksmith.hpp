@@ -16,6 +16,8 @@ struct ProgramArguments {
   std::string logfile = "run.log";
   // number of DRAM locations we use to check a (pattern, address mapping)'s effectiveness
   size_t num_dram_locations_per_mapping = 3;
+  // number of effective hammering patterns to be found for a run to end before its runtime limit
+  size_t effective_patterns = 3;
   // total number of mappings (i.e., Aggressor ID -> DRAM rows mapping) to try for a pattern
   size_t num_address_mappings_per_pattern = 3;
 };

@@ -115,6 +115,7 @@ The following is a list of all suppported arguments:
         log to specified file (default: run.log)
     -p, --probes
         number of different DRAM locations to try each pattern on (default: 3)
-
+    -e, --effective-patterns
+        number of effective hammering patterns to be found for a run to end before its runtime limit (default: 3)
 ```
 

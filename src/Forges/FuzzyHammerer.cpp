@@ -96,7 +96,7 @@ FuzzyHammerer::n_sided_frequency_based_hammering(BlacksmithConfig &config, DramA
     }
 
     // end fuzzing if three or more effective patterns have been found
-    if (effective_patterns.size() >= 3)
+    if (effective_patterns.size() >= program_args.effective_patterns)
       break;
 
     // dynamically change num acts per tREF after every 100 patterns; this is to avoid that we made a bad choice at the
