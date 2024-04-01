@@ -73,7 +73,8 @@ void Logger::log_debug(const std::string &message, bool newline) {
 #endif
 }
 
-std::string Logger::format_timestamp(unsigned long ts) {
+std::string Logger::timestamp() {
+  auto ts = (unsigned long) time(nullptr) - instance.timestamp_start;
   auto minutes = ts/60;
   auto hours = minutes/60;
   std::stringstream ss;
@@ -81,15 +82,6 @@ std::string Logger::format_timestamp(unsigned long ts) {
      << int(minutes%60) << " minutes "
      << int(ts%60) << " seconds";
   return ss.str();
-}
-
-void Logger::log_timestamp() {
-  std::stringstream ss;
-  auto current_time = (unsigned long) time(nullptr);
-  ss << "Time elapsed: "
-     << format_timestamp(current_time - instance.timestamp_start)
-     << ".";
-  log_info(ss.str());
 }
 
 void Logger::log_bitflip(volatile char *flipped_address, uint64_t row_no, unsigned char actual_value,
@@ -101,7 +93,7 @@ void Logger::log_bitflip(volatile char *flipped_address, uint64_t row_no, unsign
      << "page offset: " << (uint64_t)flipped_address%(uint64_t)getpagesize() << ", "
      << "byte offset: " << (uint64_t)flipped_address%(uint64_t)8 << ", "
      << std::hex << "from " << (int) expected_value << " to " << (int) actual_value << ", "
-     << std::dec << "at " << format_timestamp(timestamp - instance.timestamp_start) << "."
+     << std::dec << "at " << Logger::timestamp() << "."
      << F_RESET;
   if (newline) ss << std::endl;
   
@@ -114,7 +106,7 @@ void Logger::log_corrected_bitflip(int count, unsigned long timestamp) {
   std::stringstream ss;
   ss << FC_GREEN << FF_BOLD
      << "[!] ECC successfully corrected " << count << " bitflip(s) at "
-     << format_timestamp(timestamp - instance.timestamp_start) << "."
+     << Logger::timestamp() << "."
      << F_RESET << std::endl;
   
   std::string out = ss.str();

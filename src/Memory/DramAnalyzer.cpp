@@ -61,6 +61,8 @@ size_t DramAnalyzer::determine_conflict_thresh(volatile char *base, volatile cha
 // This method uses some modified code from CheckAddrFunction.cpp created by Luca Wilke
 //
 void DramAnalyzer::check_addr_function(size_t thresh) {
+  Logger::log_debug("Checking correctness of address function");
+
   size_t bank_count = DRAMAddr::get_bank_count();
   size_t row_count = DRAMAddr::get_row_count();
   size_t checked_banks = 4;
@@ -68,6 +70,7 @@ void DramAnalyzer::check_addr_function(size_t thresh) {
     checked_banks = bank_count;
 
   for(size_t bank = 0; bank < checked_banks; bank++) {
+    Logger::log_debug(format_string("Checking bank %zu", bank));
     for(size_t row = 1; row < row_count; row++) {
       auto addrA = DRAMAddr(bank,0,0);
       auto addrB = DRAMAddr(bank,row,0);

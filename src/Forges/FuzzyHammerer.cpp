@@ -18,6 +18,7 @@ FuzzyHammerer::n_sided_frequency_based_hammering(BlacksmithConfig &config, DramA
   std::mt19937 gen = std::mt19937(std::random_device()());
 
   Logger::log_info(format_string("Fuzzing has started. Details are being written to %s. Any detected bitflips will also be written to the console.", program_args.logfile.c_str()));
+  Logger::log_data("");
   Logger::stdout(false);
 
   // make sure that this is empty (e.g., from previous call to this function)
@@ -39,7 +40,7 @@ FuzzyHammerer::n_sided_frequency_based_hammering(BlacksmithConfig &config, DramA
   const auto execution_time_limit = static_cast<int64_t>(start_ts + runtime_limit * 3600);
 
   for (; get_timestamp_sec() < execution_time_limit; ++cnt_generated_patterns) {
-    Logger::log_timestamp();
+    Logger::log_info(format_string("Time elapsed: %s.", Logger::timestamp().c_str()));
     Logger::log_highlight(format_string("Generating hammering pattern #%lu.", cnt_generated_patterns));
     fuzzing_params.randomize_parameters(true);
 
@@ -113,7 +114,8 @@ FuzzyHammerer::n_sided_frequency_based_hammering(BlacksmithConfig &config, DramA
   } // end of fuzzing
 
   Logger::stdout(true);
-  Logger::log_info("Fuzzing run finished.");
+  Logger::log_data("");
+  Logger::log_info(format_string("Fuzzing run finished after %s.", Logger::timestamp().c_str()));
   Logger::log_info(format_string("Total corrected bit flips: %zu", total_corrected));
   Logger::log_info(format_string("Total uncorrected bit flips: %zu", total_uncorrected));
   if (total_corrected > 0) {

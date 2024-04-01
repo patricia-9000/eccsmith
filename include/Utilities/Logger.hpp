@@ -32,8 +32,6 @@ class Logger {
 
   bool also_log_to_stdout = false;
 
-  static std::string format_timestamp(unsigned long ts);
-
   unsigned long timestamp_start{};
 
  public:
@@ -61,7 +59,7 @@ class Logger {
   
   static void log_debug(const std::string &message, bool newline = true);
 
-  static void log_timestamp();
+  static std::string timestamp();
 
   static void log_config(BlacksmithConfig &config);
 
