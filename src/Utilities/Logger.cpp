@@ -127,13 +127,15 @@ void Logger::log_sql_error(int result_code) {
 }
 
 void Logger::log_success(const std::string &message, bool newline) {
-  instance.logfile << FC_GREEN << "[!] " << message << F_RESET;
-  if (newline) instance.logfile << std::endl;
+  std::stringstream ss;
+  ss << FC_GREEN << "[!] " << message << F_RESET;
+  log_data(ss.str(), newline);
 }
 
 void Logger::log_failure(const std::string &message, bool newline) {
-  instance.logfile << FC_RED_BRIGHT << "[-] " << message << F_RESET;
-  if (newline) instance.logfile << std::endl;
+  std::stringstream ss;
+  ss << FC_RED_BRIGHT << "[-] " << message << F_RESET;
+  log_data(ss.str(), newline);
 }
 
 void Logger::log_metadata(const char *commit_hash, BlacksmithConfig &config, size_t run_time_limit) {

@@ -10,6 +10,7 @@ size_t FuzzyHammerer::cnt_pattern_probes = 0UL;
 size_t FuzzyHammerer::cnt_generated_patterns = 0UL;
 std::unordered_map<std::string, std::unordered_map<std::string, int>> FuzzyHammerer::map_pattern_mappings_bitflips;
 HammeringPattern FuzzyHammerer::hammering_pattern = HammeringPattern(); /* NOLINT */
+size_t total_corrected = 0, total_uncorrected = 0;
 
 void
 FuzzyHammerer::n_sided_frequency_based_hammering(BlacksmithConfig &config, DramAnalyzer &dramAnalyzer, Memory &memory,
@@ -24,10 +25,6 @@ FuzzyHammerer::n_sided_frequency_based_hammering(BlacksmithConfig &config, DramA
 
   FuzzingParameterSet fuzzing_params(acts);
   fuzzing_params.print_static_parameters();
-
-#ifdef ENABLE_JSON
-  nlohmann::json arr = nlohmann::json::array();
-#endif
 
   // all patterns that triggered bit flips
   std::vector<HammeringPattern> effective_patterns;
@@ -75,10 +72,8 @@ FuzzyHammerer::n_sided_frequency_based_hammering(BlacksmithConfig &config, DramA
       }
     }
 
-    if (sum_flips_one_pattern_all_mappings > 0) {
+    if (sum_flips_one_pattern_all_mappings > 0)
       effective_patterns.push_back(hammering_pattern);
-      arr.push_back(hammering_pattern);
-    }
 
     // TODO additionally consider the number of locations where this pattern triggers bit flips besides the total
     //  number of bit flips only because we want to find a pattern that generalizes well
@@ -99,6 +94,10 @@ FuzzyHammerer::n_sided_frequency_based_hammering(BlacksmithConfig &config, DramA
       }
     }
 
+    // end fuzzing if three or more effective patterns have been found
+    if (effective_patterns.size() >= 3)
+      break;
+
     // dynamically change num acts per tREF after every 100 patterns; this is to avoid that we made a bad choice at the
     // beginning and then get stuck with that value
     if (cnt_generated_patterns % 100 == 0) {
@@ -113,37 +112,23 @@ FuzzyHammerer::n_sided_frequency_based_hammering(BlacksmithConfig &config, DramA
 
   } // end of fuzzing
 
-  log_overall_statistics(
-      cnt_generated_patterns,
-      best_mapping.get_instance_id(),
-      best_mapping_bitflips,
-      effective_patterns.size());
-
-  // start the post-analysis stage ============================
-  if (arr.empty()) {
-    Logger::log_info("Skipping post-analysis stage as no effective patterns were found.");
+  Logger::stdout(true);
+  Logger::log_info("Fuzzing run finished.");
+  Logger::log_info(format_string("Total corrected bit flips: %zu", total_corrected));
+  Logger::log_info(format_string("Total uncorrected bit flips: %zu", total_uncorrected));
+  if (total_corrected > 0) {
+    if (total_uncorrected == 0)
+      Logger::log_success("ECC is most likely functioning correctly on this system.");
+    else
+      Logger::log_failure("ECC is enabled on this system, but does not seem to be functioning correctly.");
   } else {
-    Logger::log_info("Starting post-analysis stage.");
+    if (total_uncorrected > 0)
+      Logger::log_failure("ECC is most likely not enabled on this system.");
+    else {
+      Logger::log_failure("Results inconclusive.");
+      Logger::log_failure("Your system may not be susceptible to Rowhammer. You could try running again with a longer time limit.");
+    }
   }
-
-#ifdef ENABLE_JSON
-  // export everything to JSON, this includes the HammeringPattern, AggressorAccessPattern, and BitFlips
-  std::ofstream json_export("fuzz-summary.json");
-
-  nlohmann::json meta;
-  meta["start"] = start_ts;
-  meta["end"] = get_timestamp_sec();
-  meta["num_patterns"] = arr.size();
-  meta["memory_config"] = DRAMAddr::get_memcfg_json();
-  meta["name"] = config.name;
-
-  nlohmann::json root;
-  root["metadata"] = meta;
-  root["hammering_patterns"] = arr;
-
-  json_export << root << std::endl;
-  json_export.close();
-#endif
 }
 
 void FuzzyHammerer::probe_mapping_and_scan(PatternAddressMapper &mapper, Memory &memory,
@@ -171,7 +156,7 @@ void FuzzyHammerer::probe_mapping_and_scan(PatternAddressMapper &mapper, Memory 
       hammering_accesses_vec, sync_at_each_ref, num_aggs_for_sync,
       fuzzing_params.get_hammering_total_num_activations());
 
-  size_t flipped_bits = 0;
+  size_t corrected = 0, uncorrected = 0;
   for (size_t dram_location = 0; dram_location < num_dram_locations; ++dram_location) {
     mapper.bit_flips.emplace_back();
 
@@ -198,10 +183,10 @@ void FuzzyHammerer::probe_mapping_and_scan(PatternAddressMapper &mapper, Memory 
     code_jitter.hammer_pattern(fuzzing_params, true);
 
     // check if any uncorrected bit flips happened
-    flipped_bits += memory.check_memory(mapper, false, true);
+    uncorrected += memory.check_memory(mapper, false, true);
     
     // check if any corrected bit flips happened
-    flipped_bits += ras_watcher->report_corrected_bitflips(mapper);
+    corrected += ras_watcher->report_corrected_bitflips(mapper);
 
     // now shift the mapping to another location
     std::mt19937 gen = std::mt19937(std::random_device()());
@@ -214,24 +199,14 @@ void FuzzyHammerer::probe_mapping_and_scan(PatternAddressMapper &mapper, Memory 
     }
   }
 
+  total_corrected += corrected;
+  total_uncorrected += uncorrected;
+
   // store info about this bit flip (pattern ID, mapping ID, no. of bit flips)
-  map_pattern_mappings_bitflips[hammering_pattern.instance_id].emplace(mapper.get_instance_id(), flipped_bits);
+  map_pattern_mappings_bitflips[hammering_pattern.instance_id].emplace(mapper.get_instance_id(), corrected + uncorrected);
 
   // cleanup the jitter for its next use
   code_jitter.cleanup();
-}
-
-void FuzzyHammerer::log_overall_statistics(size_t cur_round, const std::string &best_mapping_id,
-                                           size_t best_mapping_num_bitflips, size_t num_effective_patterns) {
-  Logger::log_info("Fuzzing run finished successfully.");
-  Logger::log_data(format_string("Number of generated patterns: %lu", cur_round));
-  Logger::log_data(format_string("Number of generated mappings per pattern: %lu",
-      program_args.num_address_mappings_per_pattern));
-  Logger::log_data(format_string("Number of tested locations per pattern: %lu",
-      program_args.num_dram_locations_per_mapping));
-  Logger::log_data(format_string("Number of effective patterns: %lu", num_effective_patterns));
-  Logger::log_data(format_string("Best pattern ID: %s", best_mapping_id.c_str()));
-  Logger::log_data(format_string("Best pattern #bitflips: %ld", best_mapping_num_bitflips));
 }
 
 void FuzzyHammerer::generate_pattern_for_ARM(BlacksmithConfig &config,
