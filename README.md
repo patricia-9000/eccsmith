@@ -105,7 +105,7 @@ The following is a list of all suppported arguments:
 ==== Mandatory Parameters ==================================
 
     -c, --config
-        path to JSON file containing the memory configuration to use. See below for sample configuration 
+        path to JSON file containing the memory configuration to use
         
 ==== Optional Parameters ===================================
 
