@@ -51,9 +51,9 @@ class Logger {
   static void log_data(const std::string &message, bool newline = true);
 
   static void log_bitflip(volatile char *flipped_address, uint64_t row_no, unsigned char actual_value,
-                          unsigned char expected_value, unsigned long timestamp, bool newline);
+                          unsigned char expected_value, bool newline);
   
-  static void log_corrected_bitflip(int count, unsigned long timestamp);
+  static void log_corrected_bitflip(int count);
 
   static void log_sql_error(int result_code);
   

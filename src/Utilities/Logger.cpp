@@ -85,7 +85,7 @@ std::string Logger::timestamp() {
 }
 
 void Logger::log_bitflip(volatile char *flipped_address, uint64_t row_no, unsigned char actual_value,
-                         unsigned char expected_value, unsigned long timestamp, bool newline) {
+                         unsigned char expected_value, bool newline) {
   std::stringstream ss;
   ss << FC_RED_BRIGHT << FF_BOLD
      << "[!] ECC failed to correct bitflip " << std::hex << (void *) flipped_address << ", "
@@ -102,7 +102,7 @@ void Logger::log_bitflip(volatile char *flipped_address, uint64_t row_no, unsign
   std::cout << out;
 }
 
-void Logger::log_corrected_bitflip(int count, unsigned long timestamp) {
+void Logger::log_corrected_bitflip(int count) {
   std::stringstream ss;
   ss << FC_GREEN << FF_BOLD
      << "[!] ECC successfully corrected " << count << " bitflip(s) at "

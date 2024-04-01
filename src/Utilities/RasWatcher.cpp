@@ -25,7 +25,7 @@ int RasWatcher::report_corrected_bitflips(PatternAddressMapper &mapping) {
   int new_corrections = fetch_new_corrections();
   mapping.corrected_bit_flips += new_corrections;
   if (new_corrections > 0)
-    Logger::log_corrected_bitflip(new_corrections, (size_t) time(nullptr));
+    Logger::log_corrected_bitflip(new_corrections);
   return new_corrections;
 }
 
