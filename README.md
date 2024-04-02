@@ -110,7 +110,7 @@ The following is a list of all suppported arguments:
 ==== Optional Parameters ===================================
 
     -t, --runtime-limit
-        number of hours to run the fuzzer before sweeping/terminating (default: 3)
+        number of hours to run the fuzzer before terminating (default: 3)
     -l, --logfile
         log to specified file (default: run.log)
     -p, --probes
