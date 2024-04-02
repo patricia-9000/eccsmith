@@ -70,6 +70,10 @@ class Logger {
   static void log_success(const std::string &message, bool newline = true);
 
   static void log_failure(const std::string &message, bool newline = true);
+  
+  static void delete_stdout_line();
+  
+  static void log_progress(const std::string &message);
 };
 
 #endif //BLACKSMITH_INCLUDE_LOGGER_HPP_

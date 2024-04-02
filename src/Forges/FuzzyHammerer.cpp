@@ -17,7 +17,7 @@ FuzzyHammerer::n_sided_frequency_based_hammering(BlacksmithConfig &config, DramA
                                                  uint64_t acts, size_t runtime_limit, size_t probes_per_pattern) {
   std::mt19937 gen = std::mt19937(std::random_device()());
 
-  Logger::log_info(format_string("Fuzzing has started. Details are being written to %s. Any detected bitflips will also be written to the console.", program_args.logfile.c_str()));
+  Logger::log_progress(format_string("Fuzzing has started. Details are being written to %s. Any detected bitflips will also be written to the console.", program_args.logfile.c_str()));
   Logger::log_data("");
   Logger::stdout(false);
 

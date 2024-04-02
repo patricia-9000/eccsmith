@@ -60,7 +60,7 @@ void Logger::log_analysis_stage(const std::string &message, bool newline) {
   if (newline) instance.logfile << std::endl;
 }
 
-#define DEBUG
+//#define DEBUG
 void Logger::log_debug(const std::string &message, bool newline) {
 #ifdef DEBUG
   std::stringstream ss;
@@ -71,6 +71,18 @@ void Logger::log_debug(const std::string &message, bool newline) {
   std::ignore = message;
   std::ignore = newline;
 #endif
+}
+
+void Logger::delete_stdout_line() {
+#ifndef DEBUG
+  if (instance.also_log_to_stdout)
+    std::cout << "\x1b[1A" << "\x1b[2K";
+#endif
+}
+
+void Logger::log_progress(const std::string &message) {
+  if (instance.also_log_to_stdout)
+    std::cout << FC_YELLOW << "[%] " << message << F_RESET << std::endl;
 }
 
 std::string Logger::timestamp() {

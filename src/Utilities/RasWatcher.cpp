@@ -10,10 +10,12 @@
 #include <chrono>
 
 RasWatcher::RasWatcher() {
+  Logger::log_progress("Connecting to Rasdaemon database...");
   int ret = sqlite3_open_v2("/var/lib/rasdaemon/ras-mc_event.db", &ras_db, SQLITE_OPEN_READONLY, NULL);
   if (ret != SQLITE_OK) Logger::log_sql_error(ret);
   fetch_new_corrections();
-  Logger::log_info(format_string("Opening connection to Rasdaemon database, with a total of %d prior ECC corrections on record.", total_corrections));
+  Logger::delete_stdout_line();
+  Logger::log_info(format_string("Connected to Rasdaemon database, with a total of %d prior ECC corrections on record.", total_corrections));
 }
 
 RasWatcher::~RasWatcher() {

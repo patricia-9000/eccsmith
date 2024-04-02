@@ -44,7 +44,7 @@ void Memory::allocate_memory() {
 }
 
 void Memory::initialize(DATA_PATTERN data_pattern) {
-  Logger::log_info("Initializing memory with pseudorandom sequence.");
+  Logger::log_progress("Initializing memory...");
 
   // for each page in the address space [start, end]
   for (uint64_t cur_page = 0; cur_page < size; cur_page += getpagesize()) {
@@ -69,6 +69,9 @@ void Memory::initialize(DATA_PATTERN data_pattern) {
       *((int *) (start_address + offset)) = fill_value;
     }
   }
+  
+  Logger::delete_stdout_line();
+  Logger::log_info("Memory initialized with pseudorandom sequence.");
 }
 
 size_t Memory::check_memory(PatternAddressMapper &mapping, bool reproducibility_mode, bool verbose) {

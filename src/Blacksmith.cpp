@@ -39,7 +39,6 @@ int main(int argc, char **argv) {
   if (ret!=0) Logger::log_error("Instruction setpriority failed.");
 
   // allocate a large bulk of contiguous memory
-  Logger::log_debug("Allocating memory...");
   Memory memory(config, true);
   memory.allocate_memory();
 
@@ -53,10 +52,7 @@ int main(int argc, char **argv) {
   uint64_t acts_per_trefi = dram_analyzer.analyze_dram(true);
   
   // start the rasdaemon watcher
-  Logger::log_debug("Connecting to Rasdaemon database");
   ras_watcher = new RasWatcher();
-
-  Logger::log_debug("Jumping to hammering logic");
   
   FuzzyHammerer::n_sided_frequency_based_hammering(config, dram_analyzer, memory,
                                                    acts_per_trefi,

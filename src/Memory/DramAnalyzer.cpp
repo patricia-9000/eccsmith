@@ -36,7 +36,7 @@ size_t DramAnalyzer::analyze_dram(bool check) {
 // This method uses some modified code from DetermineConflictThresh.cpp created by Luca Wilke
 //
 size_t DramAnalyzer::determine_conflict_thresh(volatile char *base, volatile char *diff, volatile char *same) {
-  Logger::log_debug("Determining row conflict threshold");
+  Logger::log_progress("Determining row conflict threshold...");
 
   // Measure row conflict timing
   uint64_t conf_sum = 0;
@@ -53,6 +53,7 @@ size_t DramAnalyzer::determine_conflict_thresh(volatile char *base, volatile cha
   uint64_t hit_avg = hit_sum / THRESH_SAMPLES;
 
   uint64_t thresh = hit_avg + ((conf_avg - hit_avg) / 2);
+  Logger::delete_stdout_line();
   Logger::log_info(format_string("Determined row conflict threshold to be %lu.", thresh));
   return thresh;
 }
@@ -61,7 +62,7 @@ size_t DramAnalyzer::determine_conflict_thresh(volatile char *base, volatile cha
 // This method uses some modified code from CheckAddrFunction.cpp created by Luca Wilke
 //
 void DramAnalyzer::check_addr_function(size_t thresh) {
-  Logger::log_debug("Checking correctness of address function");
+  Logger::log_progress("Checking correctness of config file...");
 
   size_t bank_count = DRAMAddr::get_bank_count();
   size_t row_count = DRAMAddr::get_row_count();
@@ -70,7 +71,8 @@ void DramAnalyzer::check_addr_function(size_t thresh) {
     checked_banks = bank_count;
 
   for(size_t bank = 0; bank < checked_banks; bank++) {
-    Logger::log_debug(format_string("Checking bank %zu", bank));
+  Logger::delete_stdout_line();
+  Logger::log_progress(format_string("Checking correctness of config file (bank %zu)...", bank));
     for(size_t row = 1; row < row_count; row++) {
       auto addrA = DRAMAddr(bank,0,0);
       auto addrB = DRAMAddr(bank,row,0);
@@ -85,11 +87,12 @@ void DramAnalyzer::check_addr_function(size_t thresh) {
     }
   }
 
+  Logger::delete_stdout_line();
   Logger::log_info("Selected config file has been checked, and seems to be correct.");
 }
 
 size_t DramAnalyzer::count_acts_per_trefi(volatile char *base, volatile char *diff, size_t start_threshold) {
-  Logger::log_debug("Determining acts per ref");
+  Logger::log_progress("Determining number of activations per refresh interval...");
   uint64_t acts_per_ref;
 
   size_t skip_first_N = 50;
@@ -156,6 +159,7 @@ size_t DramAnalyzer::count_acts_per_trefi(volatile char *base, volatile char *di
             }
           // a standard deviation of less than 3 means the average will probably be accurate, so we go ahead with these measurements
           } else if (compute_std(acts, running_sum, acts.size()) < 3.0) {
+            Logger::delete_stdout_line();
             Logger::log_info(format_string("Determined number of row activations per refresh interval to be %lu.", acts_per_ref));
             break;
           }
