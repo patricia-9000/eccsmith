@@ -4,7 +4,7 @@
 
 Eccsmith can verify if ECC is working properly on your system, by attempting to inject bitflip errors into memory and then using [Rasdaemon](https://github.com/mchehab/rasdaemon) to detect whether or not they are successfully corrected by the ECC mechanism.
 
-Eccsmith is a modified and repurposed version of [Blacksmith](https://github.com/comsec-group/blacksmith), the program accompanying the paper _[Blacksmith: Scalable Rowhammering in the Frequency Domain](https://comsec.ethz.ch/wp-content/files/blacksmith_sp22.pdf)_ (Jattke, van der Veen, Frigo, Gunter, and Razavi). Eccsmith itself is forked from [another fork of Blacksmith](https://github.com/UzL-ITS/blacksmith/tree/jsonconfig-upstream-staging) made by The University of Lübeck's Institute for IT Security, which makes the program easier to use across different hardware.
+Eccsmith is a modified and repurposed version of [Blacksmith](https://github.com/comsec-group/blacksmith), the program accompanying the paper _[Blacksmith: Scalable Rowhammering in the Frequency Domain](https://comsec.ethz.ch/wp-content/files/blacksmith_sp22.pdf)_ (Jattke, van der Veen, Frigo, Gunter, and Razavi). Eccsmith itself is forked from [another fork of Blacksmith](https://github.com/UzL-ITS/blacksmith/tree/jsonconfig) made by The University of Lübeck's Institute for IT Security, which makes the program easier to use across different hardware.
 
 Eccsmith has been verified to work on Ubuntu 22.04.4 LTS.
 
