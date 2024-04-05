@@ -10,29 +10,21 @@ Eccsmith has been verified to work on Ubuntu 22.04.4 LTS.
 
 ## Step 1 - Build
 
-First, you must have g++ (version 8 or above) and cmake (version 3.14 or above) installed. Then simply run the build script, which will build Eccsmith with all of its dependencies:
+First, you must have g++, cmake, and libsqlite3-dev installed. Then simply run the build script, which will build Eccsmith with all of its dependencies:
 
 ```bash
 bash build.sh
 ```
 
-## Step 2 - Rasdaemon
+## Step 2 - Hugepages
 
-Install Rasdaemon:
-
-```bash
-sudo apt install rasdaemon
-```
-
-And make it start monitoring for ECC corrections:
+You also need to enable 1 GB hugepages on your system. To do this, first create the hugepage directory:
 
 ```bash
-rasdaemon
+sudo mkdir /mnt/huge
 ```
 
-## Step 3 - Hugepages
-
-You also need to enable 1 GB hugepages on your system. To do this, edit the contents of the file `/etc/default/grub` so that the line:
+Then edit the contents of the file `/etc/default/grub` so that the line:
 
 ```
 GRUB_CMDLINE_LINUX=""
@@ -51,6 +43,20 @@ sudo update-grub
 ```
 
 Then restart your system, and hugepages will be enabled.
+
+## Step 3 - Rasdaemon
+
+Install Rasdaemon:
+
+```bash
+sudo apt install rasdaemon
+```
+
+And make it start monitoring for ECC corrections:
+
+```bash
+rasdaemon
+```
 
 ## Step 4 - Memory mapping
 
